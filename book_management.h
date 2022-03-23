@@ -1,6 +1,10 @@
 #ifndef BOOK_MANAGEMENT_GUARD__H 
 #define BOOK_MANAGEMENT_GUARD__H
 
+
+#define TITLE 80
+#define AUTHOR 80
+
 #include <stdio.h>
 
 /*You can extend the structs (Book and BookList) defined in this head file;
@@ -9,8 +13,8 @@
 */
 
 
+
 typedef struct _Book {
-	struct _Book* before;
 	unsigned int id; //Book ID
 	char* title; //book title
 	char* authors; //comma separated list of authors
@@ -19,10 +23,27 @@ typedef struct _Book {
 	struct _Book* next; //pointer to the next book element
 }Book;
 
+
+
 typedef struct _BookList {
 	Book* list; // pointer to a list of struct Book.
 	unsigned int length; // number of elements in the (Book*) List 
 }BookList;
+
+
+
+typedef struct User {
+	char ID[9];
+	char password[9];
+	int bookNum;
+	Book* broBook;
+	struct User* next;
+}user;
+
+
+
+Book* library;
+
 
 
 //saves the database of books in the specified file

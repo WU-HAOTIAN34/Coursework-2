@@ -7,15 +7,42 @@
 
 
 int store_books(FILE* file) {
-	if (file == NULL) {
-		return 0;
+	int len;
+	Book* newBook = library->list;
+	fwrite(&(library->length), sizeof(int), 1, file);
+	while (newBook != NULL) {
+		fwrite(&(newBook->id), sizeof(unsigned int), 1, file);
+		len = strlen(newBook->title);
+		fwrite(&(len), sizeof(int), 1, file);
+		fwrite(newBook->title, sizeof(char), len, file);
+		fwrite(&(len), sizeof(int), 1, file);
+		len = strlen(newBook->authors);
+		fwrite(newBook->authors, sizeof(char), len, file);
+		fwrite(newBook->year, sizeof(unsigned int), 2, file);
+		newBook = newBook->next;
 	}
-	library = (Book*)malloc(sizeof(Book));
 }
 
 
 int load_books(FILE* file) {
-	
+	int len, i;
+	Book* newBook;
+	library = (BookList*)malloc(sizeof(BookList));
+	fread(&(library->length), sizeof(int), 1, file);
+	library->list = (Book*)malloc(sizeof(Book));
+	newBook = library->list;
+	for (i = 0; i < library->length; i++) {
+		fread(&(newBook->id), sizeof(unsigned int), 1, file);
+		fread(&(len), sizeof(int), 1, file);
+		newBook->title = (char*)malloc(sizeof(char) * (len + 1));
+		memset(newBook->title, '\0', len + 1);
+		fread(newBook->title, sizeof(char), len, file);
+		fread(&(len), sizeof(int), 1, file);
+		newBook->authors = (char*)malloc(sizeof(char) * (len + 1));
+		memset(newBook->authors, '\0', len + 1);
+		fread(newBook->authors, sizeof(char), len, file);
+		fread(&(newBook->year), sizeof(unsigned int), 2, file);
+	}
 }
 
 

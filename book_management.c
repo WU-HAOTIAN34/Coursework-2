@@ -8,41 +8,58 @@
 
 
 int store_books(FILE* file) {
+	if (file == NULL) {
+		return 0;
+	}
 	int len;
 	Book* newBook = library->list;
-	fwrite(&library->length, sizeof(unsigned int), 1, file);
+	fwrite(&library->length, sizeof(unsigned int), 1, file);   // write the book number
 	while (newBook != NULL) {
+		// write id
 		fwrite(&(newBook->id), sizeof(unsigned int), 1, file);
-		len = strlen(newBook->title);
-		fwrite(&(len), sizeof(int), 1, file);
-		fwrite(newBook->title, sizeof(char), len, file);
+		// write title
+		len = strlen(newBook->title);  // obtain the length of title
+		// write the length because loading the title need to know the length of the string		
+		fwrite(&(len), sizeof(int), 1, file);   
+		fwrite(newBook->title, sizeof(char), len, file);  // write title
+		//   write author
 		len = strlen(newBook->authors);
 		fwrite(&(len), sizeof(int), 1, file);
 		fwrite(newBook->authors, sizeof(char), len, file);
+		// year and copies
 		fwrite(&(newBook->year), sizeof(unsigned int), 2, file);
 		newBook = newBook->next;
 	}
+	return 1;
 }
 
 
 
 int load_books(FILE* file) {
+	if (file == NULL) {
+		return 0;
+	}
 	int len, i;
 	Book* newBook;
 	fread(&(library->length), sizeof(unsigned int), 1, file);
 	library->list = (Book*)malloc(sizeof(Book));
 	newBook = library->list;
 	for (i = 0; i < library->length; i++) {
+		//load book id
 		fread(&(newBook->id), sizeof(unsigned int), 1, file);
-		fread(&(len), sizeof(int), 1, file);
-		newBook->title = (char*)malloc(sizeof(char) * (len + 1));
-		memset(newBook->title, '\0', len + 1);
-		fread(newBook->title, sizeof(char), len, file);
+		// load title
+		fread(&(len), sizeof(int), 1, file);        // obtain the length of title
+		newBook->title = (char*)malloc(sizeof(char) * (len + 1)); //open space +1 because need an end character \0
+		memset(newBook->title, '\0', len + 1);        //   initialize by '\0'
+		fread(newBook->title, sizeof(char), len, file);   //load
+		//   load author
 		fread(&(len), sizeof(int), 1, file);
 		newBook->authors = (char*)malloc(sizeof(char) * (len + 1));
 		memset(newBook->authors, '\0', len + 1);
 		fread(newBook->authors, sizeof(char), len, file);
+		// year and copies
 		fread(&(newBook->year), sizeof(unsigned int), 2, file);
+		       // judge if is the last one 
 		if (i == library->length - 1) {
 			newBook->next = NULL;
 			break;
@@ -52,6 +69,7 @@ int load_books(FILE* file) {
 			newBook = newBook->next;
 		}
 	}
+	return 1;
 }
 
 

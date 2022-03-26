@@ -2,9 +2,6 @@
 #define BOOK_MANAGEMENT_GUARD__H
 
 
-#define TITLE 80
-#define AUTHOR 80
-
 #include <stdio.h>
 
 /*You can extend the structs (Book and BookList) defined in this head file;
@@ -32,8 +29,14 @@ typedef struct _BookList {
 
 
 
+typedef struct _userList {
+	int userNum;
+	user* list;
+}userList;
+
+
 typedef struct User {
-	char ID[9];
+	char* ID;
 	char password[9];
 	int bookNum;
 	Book* broBook;
@@ -41,8 +44,8 @@ typedef struct User {
 }user;
 
 
-
-Book* library;
+userList* member;
+BookList* library;
 
 
 

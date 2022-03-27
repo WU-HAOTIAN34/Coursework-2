@@ -38,7 +38,6 @@ int ifStrValid(char* str, int len) {
 
 
 
-
 int loadUser(FILE* file) {
 	if (file == NULL) {
 		return 0;
@@ -151,12 +150,13 @@ int storeUser(FILE* file) {
 
 
 
-void printBook(Book* library) {
-	Book* newBook = library->next;
-	printf("\nID     Title                         Author               Year     Copies\n\n");
-	while (newBook != NULL) {
-		printf("%7d%30s%21s%9d%4d\n", newBook->id, newBook->title, 
-			    newBook->authors, newBook->year, newBook->copies);
+void printBook(BookList* book) {
+	int i;
+	Book* newBook = book->list;
+	printf("\nID     Title                         Author               Year          Copies\n\n");
+	for (i = 0; i < book->length; i++) {
+		printf("%-7d%-30s%-21s%-14d%-4d\n", newBook->id, newBook->title,
+			newBook->authors, newBook->year, newBook->copies);
 		newBook = newBook->next;
 	}
 }
@@ -165,40 +165,156 @@ void printBook(Book* library) {
 
 
 
+int registerModel() {
+	int len;
+	char ID[100];
+	char password[100];
+	memset(ID, '\0', 100);
+	memset(password, '\0', 100);
+	user* newUser = member->list;
+	printf("Please enter your ID (Consists of letters and spaces but don't start with space): ");
+	scanf("%s", ID);
+	if (!ifStrValid(ID, strlen(ID))) {
+		printf("Invalid ID, fail to register.");
+		return 0;
+	}
+	while (newUser->next != NULL) {
+		if (strcmp(newUser->ID, ID)) {
+			printf("The ID has existed, fail to register.");
+			return 0;
+		}
+		newUser = newUser->next;
+	}
+	if (strcmp(newUser->ID, ID)) {
+		printf("The ID has existed, fail to register.");
+		return 0;
+	}
+	printf("Please enter your password (8-digit-number): ");
+	scanf("%s", password);
+	if (strspn(password, "0123456789") == strlen(password) && strlen(password) == 8) {
+		printf("Invalid password, fail to register.");
+		return 0;
+	}
+	newUser->next = (user*)malloc(sizeof(user));
+	newUser = newUser->next;
+	newUser->next = NULL;
+	len = strlrn(ID);
+	newUser->ID = (char*)malloc(sizeof(char) * (len + 1));
+	memset(newUser->ID, '\0', len + 1);
+	strcpy(newUser->ID, ID);
+	memset(newUser->password, '\0', 9);
+	strcpy(newUser->password, password);
+	newUser->broBook = NULL;
+	newUser->bookNum = 0;
+	return 1;
+}
+
+
+
+
+
+int signModel() {
+	int len;
+	char ID[100];
+	char password[100];
+	memset(ID, '\0', 100);
+	memset(password, '\0', 100);
+	user* newUser = member->list;
+	printf("Please enter your ID: ");
+	scanf("%s", ID);
+	while (newUser != NULL) {
+
+	}
+
+
+
+	while (1) {
+		printf("Please enter your ID number(8-digit-number): ");
+		scanf("%s", enterID);
+		if (strspn(enterID, "0123456789") == strlen(enterID) && strlen(enterID) == 8) {
+			break;
+		}
+		else {
+			printf("Format error, please enter again!\n");
+		}
+		while (list->next != NULL) {
+			if (strcmp(list->ID, enterID)) {
+				strcmp(password, list->password);
+				break;
+			}
+		}
+		printf("The ID doesn't exist.");
+	}
+	while (1) {
+		printf("Please enter your password(8-digit-number): ");
+		scanf("%s", password);
+		if (strspn(password, "0123456789") == strlen(password) && strlen(password) == 8) {
+			printf("Ok\n");
+			break;
+		}
+		else {
+			printf("Format error, please enter again!\n");
+		}
+		if (strcmp(password, enterpassword)) {
+			return;
+		}
+		else {
+			printf("Icorrect password, please enter again.");
+		}
+	}
+}
+
+
 
 
 
 void interface() {
-	char choice;
-	while (1) {
+	FILE* fp;
+	char enter[100];
+	int option = 0;
+	memset(enter, '\0', 100);
+	//        load book list and user list
+	member = (userList*)malloc(sizeof(userList));
+	library = (BookList*)malloc(sizeof(BookList));
+	fp = fopen("book.txt", "rb");
+	load_books(fp);
+	fclose(fp);
+	fp = fopen("user.txt", "rb");
+	loadUser(fp);
+	fclose(fp);
+	fp = NULL;
+	// option
+	while (option != 5) {
 		printf("\nPlease choose an option: \n\n1. Register an account\n2. Login\n");
 		printf("3. Search for books\n4. Display all books\n5. Quit\nOption: ");
-		scanf("%c", &choice);
-		getchar();
-		if ((int)choice > 48 && (int)choice < 54) {
-			break;
+		scanf("%s", enter);
+		option = (int)enter[0];
+		if (strlen(enter) > 1 || option <= 48 || option >= 54) {
+			printf("Sorry, the option you entered was invalid, please try again.");
 		}
 		else {
-			printf("\nSorry, the option you entered was invalid, please try again.\n");
+			option -= 48;
+			switch (option)
+			{
+			case 1:
+				registerModel();
+				break;
+			case 2:
+				signModel();
+				break;
+			case 3:
+				printf("3. Search for books");
+				break;
+			case 4:
+				printBook(library);
+				break;
+			case 5:
+				printf("5. Quit");
+				break;
+			default:
+				break;
+			}
 		}
 	}
-	switch ((int)choice - 48)
-	{
-	case 1:
-		printf("1. Register an account");
-		break;
-	case 2:
-		printf("2. Login");
-		break;
-	case 3:
-		printf("3. Search for books");
-		break;
-	case 4:
-		printf("4. Display all books");
-		break;
-	case 5:
-		printf("5. Quit");
-	default:
-		break;
-	}
+	return;
 }

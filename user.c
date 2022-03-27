@@ -19,6 +19,26 @@ Book* findBook(Book* newBook, int id) {
 }
 
 
+void freeSpace(Book* book) {
+	if (book->next == NULL) {
+		free(book->title);
+		free(book->authors);
+		free(&book);
+	}
+	else {
+		if (book->next->next == NULL) {
+			free(book->next->title);
+			free(book->next->authors);
+			free(book->next);
+			book->next = NULL;
+		}
+		else {
+			freeSpace(book->next);
+		}
+	}
+}
+
+
 
 int borrowBook(user* theUser) {
 	int option,len;
@@ -82,5 +102,12 @@ int borrowBook(user* theUser) {
 
 void returnBook(user* theUser) {
 	char id[10];
+
+}
+
+
+
+
+void userInterface(user* signUser) {
 
 }

@@ -157,7 +157,51 @@ int add_book(Book book) {
 
 int remove_book(Book book) {
 	char id[10];
+	Book* temp;
+	Book* newBook = library->list;
 	memset(id, '\0', 10);
+	printf("Please enter the ID: ");
+	scanf("%s", id);
+	if ((int)id[0] == 48 || strspn(id, "0123456789") != strlen(id) || strlen(id) >= 5 || strlen(id) <= 0) {
+		printf("Invalid id\n");
+		return 0;
+	}
+	else {
+		book.id = covertInt(id);
+	}
+	if (newBook->next == NULL) {
+		if (newBook->id == book.id) {
+			library->length -= 1;
+			library->list = NULL;
+			free(newBook->authors);
+			free(newBook->title);
+			free(&newBook);
+			return 1;
+		}
+		else {
+			printf("The book doesn't exist.");
+			return 0;
+		}
+	}
+	else {
+		if (newBook->id == book.id) {
+			library->length -= 1;
+			library->list = newBook->next;
+			free(newBook->authors);
+			free(newBook->title);
+			free(&newBook);
+			return 1;
+		}
+		while (newBook->next != NULL) {
+			if (newBook->next->id == book.id) {
+				temp = newBook->next;
+				newBook->next = newBook->next->next;
+				free(temp->authors);
+				free(temp->title);
+				free(temp);
+			}
+		}
+	}
 
 
 }

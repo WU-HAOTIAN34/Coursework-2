@@ -113,6 +113,7 @@ int storeUser(FILE* file) {
 	int i, j, len;
 	Book* newBook;
 	user* newUser = member->list;
+	fwrite(&(member->userNum), sizeof(int), 1, file);
 	while (newUser != NULL) {
 		// write user's id
 		len = strlen(newUser->ID);   // obtain the length of id
@@ -121,7 +122,7 @@ int storeUser(FILE* file) {
 		fwrite(newUser->ID, sizeof(char), len, file);  //store id
 		//store password and book number
 		fwrite(newUser->password, sizeof(char), 8, file);
-		fwrite(newUser->bookNum, sizeof(int), 1, file);
+		fwrite(&(newUser->bookNum), sizeof(int), 1, file);
 		// store the borrowed book information
 		if (newUser->bookNum != 0) {
 			newBook = newUser->broBook;

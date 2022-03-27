@@ -1,5 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "book_management.h"
+#include "interface.h"
 #include <malloc.h>
 #include <stdio.h>
 #include <string.h>
@@ -74,26 +75,93 @@ int load_books(FILE* file) {
 
 
 
-//int add_book(Book book) {
-//	Book* query = library->list;
-//	while (query->next != NULL) {
-//		query = query->next;
-//	}
-//	query->next = (Book*)malloc(sizeof(Book));
-//
-//}
-//
-//
-//
-//int remove_book(Book book) {
-//	int ID = 0;
-//	Book* list = &library;
-//	do {
-//
-//	} while (list->next->next != NULL);
-//	return 0;
-//}
-//
+int add_book(Book book) {
+	int len;
+	Book* newBook = library->list;
+	char id[10], year[10], copies[10], title[100], author[100];
+	memset(id, '\0', 10);
+	memset(year, '\0', 10);
+	memset(copies, '\0', 10);
+	memset(title, '\0', 100);
+	memset(author, '\0', 100);
+	printf("Please enter the ID (A number less than five digits and don't start with 0): ");
+	scanf("%s", id);
+	if ((int)id[0] == 48 || strspn(id, "0123456789") != strlen(id) || strlen(id) >= 5 || strlen(id) <= 0) {
+		printf("Invalid id, fail to add.\n");
+		return 0;
+	}
+	else {
+		book.id = covertInt(id);
+	}
+	printf("Please enter the title: ");
+	scanf("%s", title);
+	if (!(ifStrValid(title, strlen(title)))){
+		printf("Ivalid title, fail to add.\n");
+		return 0;
+	}
+	printf("Please enter the author: ");
+	scanf("%s", author);
+	if (!(ifStrValid(author, strlen(author)))) {
+		printf("Ivalid author, fail to add.\n");
+		return 0;
+	}
+	printf("Please enter the year (A number less than five digits and don't start with 0): ");
+	scanf("%s", year);
+	if ((int)year[0] == 48 || strspn(year, "0123456789") != strlen(year) || strlen(year) >= 5 ||
+		strlen(year) <= 0) {
+		printf("Invalid year, fail to add.\n");
+		return 0;
+	}
+	else {
+		book.year = covertInt(year);
+		if (book.year > 2022) {
+			printf("Invalid year, fail to add.\n");
+			return 0;
+		}
+	}
+	printf("Please enter the copies (Less than 1000): ");
+	scanf("%s", copies);
+	if ((int)copies[0] == 48 || strspn(copies, "0123456789") != strlen(copies) || 
+		strlen(copies) >= 4 || strlen(copies) <= 0) {
+		printf("Invalid copies, fail to add.\n");
+		return 0;
+	}
+	else {
+		book.copies = covertInt(copies);
+		if (book.copies >= 1000) {
+			printf("Invalid copies, fail to add.\n");
+			return 0;
+		}
+	}
+	while (newBook->next != NULL) {
+		newBook = newBook->next;
+	}
+	newBook->next = (Book*)malloc(sizeof(Book));
+	newBook = newBook->next;
+	newBook->id = book.id;
+	len = strlen(title);
+	newBook->title = (char*)malloc(sizeof(char) * (len + 1));
+	memset(newBook->title, '\0', len + 1);
+	strcpy(newBook->title, title);
+	len = strlen(author);
+	newBook->authors = (char*)malloc(sizeof(char) * (len + 1));
+	memset(newBook->authors, '\0', len + 1);
+	strcpy(newBook->authors, author);
+	newBook->year = book.year;
+	newBook->copies = book.copies;
+	newBook->next = NULL;
+	return 1;
+}
+
+
+
+int remove_book(Book book) {
+	char id[10];
+	memset(id, '\0', 10);
+
+
+}
+
 
 
 BookList find_book_by_title(const char* title) {

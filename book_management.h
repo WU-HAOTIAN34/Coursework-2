@@ -29,10 +29,7 @@ typedef struct _BookList {
 
 
 
-typedef struct _userList {
-	int userNum;
-	user* list;
-}userList;
+
 
 
 typedef struct User {
@@ -43,6 +40,10 @@ typedef struct User {
 	struct User* next;
 }user;
 
+typedef struct _userList {
+	int userNum;
+	user* list;
+}userList;
 
 userList* member;
 BookList* library;

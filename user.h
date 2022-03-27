@@ -1,12 +1,8 @@
-//#include <stdio.h>
-//
-//typedef struct userInf{
-//	
-//	int ID;
-//	int passWord;
-//	user* next;
-//
-//}user
-//
+#include <stdio.h>
+#include "book_management.h"
+
+
+
+Book* findBook(Book* newBook, int id);
 
 

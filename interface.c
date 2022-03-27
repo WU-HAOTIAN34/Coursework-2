@@ -2,7 +2,41 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
+#include <math.h>
 #include "book_management.h"
+
+
+int covertInt(char* str) {
+	int i;
+	int len = strlen(str);
+	int res = 0;
+	for (i = 0; i < len; i++) {
+		res += ((int)str[i] - 48) * pow(10, len - i - 1);
+	}
+	return res;
+}
+
+
+int ifStrValid(char* str, int len) {
+	int i, a;
+	if (str[0] == ' ' || len == 0) {
+		return 0;
+	}
+	for (i = 0; i < len; i++) {
+		a = (int)str[i];
+		if ((a >= 65 && a <= 90) || (a >= 97 && a <= 122)) {
+			continue;
+		}
+		if (str[i] == ' ' && str[i + 1] != ' ') {
+			continue;
+		}
+		return 0;
+	}
+	return 1;
+}
+
+
+
 
 
 int loadUser(FILE* file) {

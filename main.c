@@ -5,7 +5,24 @@
 #include "book_management.h"
 
 
-
+void freeSpace(Book* book) {
+	if (book->next == NULL) {
+		free(book->title);
+		free(book->authors);
+		free(&book);
+	}
+	else {
+		if (book->next->next == NULL) {
+			free(book->next->title);
+			free(book->next->authors);
+			free(book->next);
+			book->next = NULL;
+		}
+		else {
+			freeSpace(book->next);
+		}
+	}
+}
 
 
 
@@ -110,27 +127,22 @@ int main() {
 	printf("%d", i);*/
 
 
-	/*int d;
-	int a = 100;
-	FILE* b= fopen("a.txt", "wb+");
-	fwrite(&a, sizeof(int), 1, b);
-	fclose(b);
-	FILE* c = fopen("a.txt", "rb");
-	fread(&d, sizeof(int), 1, c);
-	fclose(c);
-	printf("%d", d);*/
+	
+	char a = '0';
+	printf("%d", (int)a);
+	
+	
 
 
+	//*****************************************************************************************************
 
-
-
-	char a[100];
+	/*char a[100];
 	memset(a, '\0', sizeof(char) * 100);
 	library = (BookList*)malloc(sizeof(BookList));
 	
 	FILE* B = fopen("book.txt", "rb");
 	load_books(B);
-	fclose(B);
+	fclose(B);*/
 
 	
 	/*Book* newBook;

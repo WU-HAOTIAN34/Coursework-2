@@ -4,6 +4,7 @@
 #include <string.h>
 #include "book_management.h"
 #include "interface.h"
+#include "librarian.h"
 
 
 Book* findBook(Book* newBook, int id) {
@@ -19,25 +20,6 @@ Book* findBook(Book* newBook, int id) {
 }
 
 
-void freeSpace(Book* book) {
-	if (book->next == NULL) {
-		free(book->title);
-		free(book->authors);
-		free(&book);
-	}
-	else {
-		if (book->next->next == NULL) {
-			free(book->next->title);
-			free(book->next->authors);
-			free(book->next);
-			book->next = NULL;
-		}
-		else {
-			freeSpace(book->next);
-		}
-	}
-}
-
 
 
 int borrowBook(user* theUser) {
@@ -46,7 +28,8 @@ int borrowBook(user* theUser) {
 	Book* query;
 	Book* newBook;
 	memset(enter, '\0', 40);
-	printf("Plesse enter your option: ");
+	printBook(library);
+	printf("Plesse enter the ID you want to borrow: ");
 	scanf("%s", enter);
 	option = (int)enter[0];
 	if (strlen(enter) > 1 || (int)enter[0] < 49 || (int)enter[0]>57) {
@@ -101,13 +84,116 @@ int borrowBook(user* theUser) {
 
 
 void returnBook(user* theUser) {
-	char id[10];
+	char id[100];
+	int option;
+	Book* temp;
+	Book* newBook = theUser->broBook;
+	memset(id, '\0', 100);
+	printf("Please enter the ID you want to remove: ");
+	scanf("%[^\n]s", id);
+	if ((int)id[0] == 48 || strspn(id, "0123456789") != strlen(id) || strlen(id) >= 5 || strlen(id) <= 0) {
+		printf("Invalid id\n");
+		return 0;
+	}
+	else {
+		option = covertInt(id);
+	}
+	if (newBook->next == NULL) {
+		if (newBook->id == option) {
+			library->length -= 1;
+			library->list = NULL;
+			free(newBook->authors);
+			free(newBook->title);
+			free(&newBook);
+			printf("\nRevome successfully!\n");
+			return 1;
+		}
+		else {
+			printf("The book doesn't exist.");
+			return 0;
+		}
+	}
+	else {
+		if (newBook->id == option) {
+			library->length -= 1;
+			library->list = newBook->next;
+			free(newBook->authors);
+			free(newBook->title);
+			free(&newBook);
+			printf("\nRevome successfully!\n");
+			return 1;
+		}
+		while (newBook->next != NULL) {
+			if (newBook->next->id == option) {
+				if (newBook->next->next = NULL) {
+					free(newBook->next->title);
+					free(newBook->next->authors);
+					free(newBook->next);
+					newBook->next = NULL;
+					printf("\nRevome successfully!\n");
+					return 1;
+				}
+				else {
+					temp = newBook->next;
+					newBook->next = newBook->next->next;
+					free(temp->authors);
+					free(temp->title);
+					free(temp);
+					printf("\nRevome successfully!\n");
+					return 1;
+				}
+
+			}
+		}
+		printf("The book doesn't exist.");
+		return 0;
+	}
 
 }
 
 
 
 
-void userInterface(user* signUser) {
-
+void userModel(user* signUser) {
+	BookList* book = (BookList*)malloc(sizeof(BookList));
+	char enter[100];
+	int option = 0;
+	memset(enter, '\0', 100);
+	while (option != 6) {
+		printf("\nPlease choose an option: \n\n1. Borrow book\n2. Return book\n");
+		printf("3. Search for books\n4. Display all books\n5. Show my books\n6. Quit\nOption: ");
+		scanf("%s", enter);
+		option = (int)enter[0];
+		if (strlen(enter) > 1 || option <= 48 || option >= 55) {
+			printf("Sorry, the option you entered was invalid, please try again.");
+		}
+		else {
+			option -= 48;
+			switch (option)
+			{
+			case 1:
+				borrowBook(signUser);
+				break;
+			case 2:
+				returnBook(signUser);
+				break;
+			case 3:
+				searchModel();
+				break;
+			case 4:
+				printBook(library);
+				break;
+			case 5:
+				book->length = signUser->bookNum;
+				book->list = signUser->broBook;
+				printBook(book);
+				break;
+			case 6:
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	return;
 }

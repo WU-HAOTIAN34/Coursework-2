@@ -4,14 +4,16 @@
 #include <string.h>
 #include <math.h>
 #include "book_management.h"
+#include "librarian.h"
+#include "user.h"
 
 
 int covertInt(char* str) {
 	int i;
 	int len = strlen(str);
 	int res = 0;
-	for (i = 0; i < len; i++) {
-		res += ((int)str[i] - 48) * pow(10, len - i - 1);
+	for (int i = 0; i < len; i++) {
+		res += ((int)str[i] - 48) * (int)pow(10, len - i - 1);
 	}
 	return res;
 }
@@ -109,7 +111,7 @@ int storeUser(FILE* file) {
 	if (file == NULL) {
 		return 0;
 	}
-	int i, j, len;
+	int len;
 	Book* newBook;
 	user* newUser = member->list;
 	fwrite(&(member->userNum), sizeof(int), 1, file);
@@ -172,33 +174,34 @@ int registerModel() {
 	memset(ID, '\0', 100);
 	memset(password, '\0', 100);
 	user* newUser = member->list;
-	printf("Please enter your ID (Consists of letters and spaces but don't start with space): ");
-	scanf("%s", ID);
+	printf("Please enter your ID (Consists of letters): ");
+	scanf("%[^\n]s", ID);
 	if (!ifStrValid(ID, strlen(ID))) {
 		printf("Invalid ID, fail to register.");
 		return 0;
 	}
 	while (newUser->next != NULL) {
-		if (strcmp(newUser->ID, ID)) {
+		if (!strcmp(newUser->ID, ID)) {
 			printf("The ID has existed, fail to register.");
 			return 0;
 		}
 		newUser = newUser->next;
 	}
-	if (strcmp(newUser->ID, ID)) {
+	if (!strcmp(newUser->ID, ID)) {
 		printf("The ID has existed, fail to register.");
 		return 0;
 	}
 	printf("Please enter your password (8-digit-number): ");
-	scanf("%s", password);
-	if (strspn(password, "0123456789") == strlen(password) && strlen(password) == 8) {
-		printf("Invalid password, fail to register.");
+	scanf("%[^\n]s", password);
+	if (!(strspn(password, "0123456789") == strlen(password) && strlen(password) == 8)) {
+		printf("\nInvalid password, fail to register.\n");
 		return 0;
 	}
 	newUser->next = (user*)malloc(sizeof(user));
 	newUser = newUser->next;
+	member->userNum += 1;
 	newUser->next = NULL;
-	len = strlrn(ID);
+	len = strlen(ID);
 	newUser->ID = (char*)malloc(sizeof(char) * (len + 1));
 	memset(newUser->ID, '\0', len + 1);
 	strcpy(newUser->ID, ID);
@@ -206,6 +209,7 @@ int registerModel() {
 	strcpy(newUser->password, password);
 	newUser->broBook = NULL;
 	newUser->bookNum = 0;
+	printf("\nCongratulations, you have registered successfully!\n");
 	return 1;
 }
 
@@ -214,54 +218,37 @@ int registerModel() {
 
 
 int signModel() {
-	int len;
 	char ID[100];
 	char password[100];
 	memset(ID, '\0', 100);
 	memset(password, '\0', 100);
 	user* newUser = member->list;
 	printf("Please enter your ID: ");
-	scanf("%s", ID);
+	scanf("%[^\n]s", ID);
+	getchar();
 	while (newUser != NULL) {
-
-	}
-
-
-
-	while (1) {
-		printf("Please enter your ID number(8-digit-number): ");
-		scanf("%s", enterID);
-		if (strspn(enterID, "0123456789") == strlen(enterID) && strlen(enterID) == 8) {
-			break;
-		}
-		else {
-			printf("Format error, please enter again!\n");
-		}
-		while (list->next != NULL) {
-			if (strcmp(list->ID, enterID)) {
-				strcmp(password, list->password);
-				break;
+		if (!strcmp(newUser->ID, ID)) {
+			printf("Please enter your password (8-digit-number): ");
+			scanf("%[^\n]s", password);
+			if (!strcmp(password, newUser->password)) {
+				printf("\nLogin successfully!\n");
+				if (!strcmp(newUser->ID, "librarian")) {
+					librarianModel();
+					return 1;
+				}
+				else {
+					userModel(newUser);
+					return 1;
+				}
+			}
+			else {
+				printf("Icorrect password, fail to login.\n");
 			}
 		}
-		printf("The ID doesn't exist.");
+		newUser = newUser->next;
 	}
-	while (1) {
-		printf("Please enter your password(8-digit-number): ");
-		scanf("%s", password);
-		if (strspn(password, "0123456789") == strlen(password) && strlen(password) == 8) {
-			printf("Ok\n");
-			break;
-		}
-		else {
-			printf("Format error, please enter again!\n");
-		}
-		if (strcmp(password, enterpassword)) {
-			return;
-		}
-		else {
-			printf("Icorrect password, please enter again.");
-		}
-	}
+	printf("The ID doesn't exist, fail to login.\n");
+	return 0;
 }
 
 
@@ -288,6 +275,7 @@ void interface() {
 		printf("\nPlease choose an option: \n\n1. Register an account\n2. Login\n");
 		printf("3. Search for books\n4. Display all books\n5. Quit\nOption: ");
 		scanf("%s", enter);
+		getchar();
 		option = (int)enter[0];
 		if (strlen(enter) > 1 || option <= 48 || option >= 54) {
 			printf("Sorry, the option you entered was invalid, please try again.");
@@ -303,13 +291,12 @@ void interface() {
 				signModel();
 				break;
 			case 3:
-				printf("3. Search for books");
+				searchModel();
 				break;
 			case 4:
 				printBook(library);
 				break;
 			case 5:
-				printf("5. Quit");
 				break;
 			default:
 				break;

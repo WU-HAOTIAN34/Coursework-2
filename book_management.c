@@ -105,7 +105,7 @@ int add_book(Book book) {
 		printf("Ivalid author, fail to add.\n");
 		return 0;
 	}
-	printf("Please enter the year (A number less than five digits and don't start with 0): ");
+	printf("Please enter the year (A number less than five digits): ");
 	scanf("%s", year);
 	if ((int)year[0] == 48 || strspn(year, "0123456789") != strlen(year) || strlen(year) >= 5 ||
 		strlen(year) <= 0) {
@@ -156,12 +156,12 @@ int add_book(Book book) {
 
 
 int remove_book(Book book) {
-	char id[10];
+	char id[100];
 	Book* temp;
 	Book* newBook = library->list;
-	memset(id, '\0', 10);
-	printf("Please enter the ID: ");
-	scanf("%s", id);
+	memset(id, '\0', 100);
+	printf("Please enter the ID you want to remove: ");
+	scanf("%[^\n]s", id);
 	if ((int)id[0] == 48 || strspn(id, "0123456789") != strlen(id) || strlen(id) >= 5 || strlen(id) <= 0) {
 		printf("Invalid id\n");
 		return 0;
@@ -176,6 +176,7 @@ int remove_book(Book book) {
 			free(newBook->authors);
 			free(newBook->title);
 			free(&newBook);
+			printf("\nRevome successfully!\n");
 			return 1;
 		}
 		else {
@@ -190,20 +191,34 @@ int remove_book(Book book) {
 			free(newBook->authors);
 			free(newBook->title);
 			free(&newBook);
+			printf("\nRevome successfully!\n");
 			return 1;
 		}
 		while (newBook->next != NULL) {
 			if (newBook->next->id == book.id) {
-				temp = newBook->next;
-				newBook->next = newBook->next->next;
-				free(temp->authors);
-				free(temp->title);
-				free(temp);
+				if (newBook->next->next = NULL) {
+					free(newBook->next->title);
+					free(newBook->next->authors);
+					free(newBook->next);
+					newBook->next = NULL;
+					printf("\nRevome successfully!\n");
+					return 1;
+				}
+				else {
+					temp = newBook->next;
+					newBook->next = newBook->next->next;
+					free(temp->authors);
+					free(temp->title);
+					free(temp);
+					printf("\nRevome successfully!\n");
+					return 1;
+				}
+				
 			}
 		}
+		printf("The book doesn't exist.");
+		return 0;
 	}
-
-
 }
 
 
@@ -218,7 +233,7 @@ BookList find_book_by_title(const char* title) {
 	res->list = NULL;
 	Book* query = library->list;
 	while (query != NULL) {
-		if (strcmp(query->title, title)) {
+		if (!strcmp(query->title, title)) {
 			newBook->id = query->id;
 			len = strlen(query->title);
 			newBook->title = (char*)malloc(sizeof(len + 1));
@@ -253,7 +268,7 @@ BookList find_book_by_author(const char* author) {
 	res->list = NULL;
 	Book* query = library->list;
 	while (query != NULL) {
-		if (strcmp(query->authors, author)) {
+		if (!strcmp(query->authors, author)) {
 			newBook->id = query->id;
 			len = strlen(query->title);
 			newBook->title = (char*)malloc(sizeof(len + 1));

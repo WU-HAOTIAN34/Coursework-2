@@ -4,7 +4,7 @@
 
 
 Book* findBook(Book* newBook, int id);
-void userInterface(user* signUser);
+void userModel(user* signUser);
 void freeSpace(Book* book);
 
 

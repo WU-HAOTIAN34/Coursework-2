@@ -278,7 +278,7 @@ void interface() {
 		getchar();
 		option = (int)enter[0];
 		if (strlen(enter) > 1 || option <= 48 || option >= 54) {
-			printf("Sorry, the option you entered was invalid, please try again.");
+			printf("\033[47;31mSorry, the option you entered was invalid, please try again.\033[0m");
 		}
 		else {
 			option -= 48;

@@ -1,4 +1,6 @@
-#include <stdio.h>
+#ifndef __INTERFACE_H__
+#define __INTERFACE_H__
+
 #include "book_management.h"
 
 
@@ -14,3 +16,4 @@ void printBook(BookList* book);
 
 void interface();
 
+#endif

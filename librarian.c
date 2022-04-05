@@ -38,6 +38,7 @@ void searchModel() {
 		printf("\nPlease choose an option: \n\n1. Find books by title\n2. Find books by author\n");
 		printf("3. Find books by year\n4. Quit\nOption: ");
 		scanf("%s", enter);
+		getchar();
 		option = (int)enter[0];
 		if (strlen(enter) > 1 || option <= 48 || option >= 53) {
 			printf("Sorry, the option you entered was invalid, please try again.");
@@ -102,6 +103,7 @@ void librarianModel() {
 		printf("\nPlease choose an option: \n\n1. Add book\n2. Remove book\n");
 		printf("3. Search for books\n4. Display all books\n5. Quit\nOption: ");
 		scanf("%s", enter);
+		getchar();
 		option = (int)enter[0];
 		if (strlen(enter) > 1 || option <= 48 || option >= 54) {
 			printf("Sorry, the option you entered was invalid, please try again.");

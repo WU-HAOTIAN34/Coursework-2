@@ -85,8 +85,9 @@ int borrowBook(user* theUser) {
 
 void returnBook(user* theUser) {
 	char id[100];
-	int option;
+	int option, i;
 	Book* temp;
+	Book* query = library->list;
 	Book* newBook = theUser->broBook;
 	memset(id, '\0', 100);
 	printf("Please enter the ID you want to remove: ");
@@ -100,12 +101,18 @@ void returnBook(user* theUser) {
 	}
 	if (newBook->next == NULL) {
 		if (newBook->id == option) {
-			library->length -= 1;
-			library->list = NULL;
+			theUser->bookNum -= 1;
+			theUser->broBook = NULL;
 			free(newBook->authors);
 			free(newBook->title);
 			free(&newBook);
 			printf("\nRevome successfully!\n");
+			while (query != NULL) {
+				if (query->id == option) {
+					query->copies += 1;
+				}
+				query = query->next;
+			}
 			return 1;
 		}
 		else {
@@ -115,35 +122,56 @@ void returnBook(user* theUser) {
 	}
 	else {
 		if (newBook->id == option) {
-			library->length -= 1;
-			library->list = newBook->next;
+			theUser->bookNum -= 1;
+			theUser->broBook = newBook->next;
 			free(newBook->authors);
 			free(newBook->title);
 			free(&newBook);
 			printf("\nRevome successfully!\n");
+			while (query != NULL) {
+				if (query->id == option) {
+					query->copies += 1;
+				}
+				query = query->next;
+			}
 			return 1;
 		}
 		while (newBook->next != NULL) {
 			if (newBook->next->id == option) {
 				if (newBook->next->next = NULL) {
+					theUser->bookNum -= 1;
 					free(newBook->next->title);
 					free(newBook->next->authors);
 					free(newBook->next);
 					newBook->next = NULL;
 					printf("\nRevome successfully!\n");
+					while (query != NULL) {
+						if (query->id == option) {
+							query->copies += 1;
+						}
+						query = query->next;
+					}
 					return 1;
 				}
 				else {
+					theUser->bookNum -= 1;
 					temp = newBook->next;
 					newBook->next = newBook->next->next;
 					free(temp->authors);
 					free(temp->title);
 					free(temp);
 					printf("\nRevome successfully!\n");
+					while (query != NULL) {
+						if (query->id == option) {
+							query->copies += 1;
+						}
+						query = query->next;
+					}
 					return 1;
 				}
 
 			}
+			newBook = newBook->next;
 		}
 		printf("The book doesn't exist.");
 		return 0;
@@ -163,6 +191,7 @@ void userModel(user* signUser) {
 		printf("\nPlease choose an option: \n\n1. Borrow book\n2. Return book\n");
 		printf("3. Search for books\n4. Display all books\n5. Show my books\n6. Quit\nOption: ");
 		scanf("%s", enter);
+		getchar();
 		option = (int)enter[0];
 		if (strlen(enter) > 1 || option <= 48 || option >= 55) {
 			printf("Sorry, the option you entered was invalid, please try again.");

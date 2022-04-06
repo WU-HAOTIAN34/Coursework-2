@@ -1,4 +1,7 @@
-#include <stdio.h>
+#ifndef __USER_H__
+#define __USER_H__
+
+
 #include "book_management.h"
 
 
@@ -8,3 +11,4 @@ void userModel(user* signUser);
 void freeSpace(Book* book);
 
 
+#endif

@@ -40,6 +40,8 @@ int ifStrValid(char* str, int len) {
 
 
 
+
+
 int loadUser(FILE* file) {
 	if (file == NULL) {
 		return 0;

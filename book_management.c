@@ -74,6 +74,26 @@ int load_books(FILE* file) {
 }
 
 
+void copyNode(Book* destination, Book* source) {
+	int len;
+	destination->id = source->id;
+	len = strlen(source->title);
+	destination->title = (char*)malloc(sizeof(char) * (len + 1));
+	memset(destination->title, '\0', len + 1);
+	strcpy(destination->title, source->title);
+	len = strlen(source->authors);
+	destination->authors = (char*)malloc(sizeof(char) * (len + 1));
+	memset(destination->authors, '\0', len + 1);
+	strcpy(destination->authors, source->authors);
+	destination->year = source->year;
+	destination->copies = source->copies;
+	destination->next = NULL;
+}
+
+
+
+
+
 
 int add_book(Book book) {
 	int len;
@@ -176,7 +196,7 @@ int remove_book(Book book) {
 			library->list = NULL;
 			free(newBook->authors);
 			free(newBook->title);
-			free(&newBook);
+			free(newBook);
 			printf("\nRevome successfully!\n");
 			return 1;
 		}
@@ -191,7 +211,7 @@ int remove_book(Book book) {
 			library->list = newBook->next;
 			free(newBook->authors);
 			free(newBook->title);
-			free(&newBook);
+			free(newBook);
 			printf("\nRevome successfully!\n");
 			return 1;
 		}
@@ -238,17 +258,7 @@ BookList find_book_by_title(const char* title) {
 	Book* query = library->list;
 	while (query != NULL) {
 		if (!strcmp(query->title, title)) {
-			newBook->id = query->id;
-			len = strlen(query->title);
-			newBook->title = (char*)malloc(sizeof(char) * (len + 1));
-			memset(newBook->title, '\0', len + 1);
-			strcpy(newBook->title, query->title);
-			len = strlen(query->authors);
-			newBook->authors = (char*)malloc(sizeof(char) * (len + 1));
-			memset(newBook->authors, '\0', len + 1);
-			strcpy(newBook->authors, query->authors);
-			newBook->year = query->year;
-			newBook->copies = query->copies;
+			copyNode(newBook, query);
 			num++;
 			newBook->next = (Book*)malloc(sizeof(Book));
 			newBook = newBook->next;
@@ -273,17 +283,7 @@ BookList find_book_by_author(const char* author) {
 	Book* query = library->list;
 	while (query != NULL) {
 		if (!strcmp(query->authors, author)) {
-			newBook->id = query->id;
-			len = strlen(query->title);
-			newBook->title = (char*)malloc(sizeof(char) * (len + 1));
-			memset(newBook->title, '\0', len + 1);
-			strcpy(newBook->title, query->title);
-			len = strlen(query->authors);
-			newBook->authors = (char*)malloc(sizeof(char) * (len + 1));
-			memset(newBook->authors, '\0', len + 1);
-			strcpy(newBook->authors, query->authors);
-			newBook->year = query->year;
-			newBook->copies = query->copies;
+			copyNode(newBook, query);
 			num++;
 			newBook->next = (Book*)malloc(sizeof(Book));
 			newBook = newBook->next;
@@ -307,17 +307,7 @@ BookList find_book_by_year(unsigned int year) {
 	Book* query = library->list;
 	while (query != NULL) {
 		if (query->year == year) {
-			newBook->id = query->id;
-			len = strlen(query->title);
-			newBook->title = (char*)malloc(sizeof(char)*(len + 1));
-			memset(newBook->title, '\0', len + 1);
-			strcpy(newBook->title, query->title);
-			len = strlen(query->authors);
-			newBook->authors = (char*)malloc(sizeof(char) * (len + 1));
-			memset(newBook->authors, '\0', len + 1);
-			strcpy(newBook->authors, query->authors);
-			newBook->year = query->year;
-			newBook->copies = query->copies;
+			copyNode(newBook, query);
 			num++;
 			newBook->next = (Book*)malloc(sizeof(Book));
 			newBook = newBook->next;

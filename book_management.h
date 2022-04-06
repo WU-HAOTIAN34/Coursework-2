@@ -49,6 +49,7 @@ userList* member;
 BookList* library;
 
 
+void copyNode(Book* destination, Book* source);
 
 //saves the database of books in the specified file
 //returns 0 if books were stored correctly, or an error code otherwise

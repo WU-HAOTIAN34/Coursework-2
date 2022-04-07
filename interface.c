@@ -273,20 +273,10 @@ int signModel() {
 
 
 void interface() {
-	FILE* fp;
 	char enter[100];
 	int option = 0;
 	memset(enter, '\0', 100);
 	//        load book list and user list
-	member = (userList*)malloc(sizeof(userList));
-	library = (BookList*)malloc(sizeof(BookList));
-	fp = fopen("book.txt", "rb");
-	load_books(fp);
-	fclose(fp);
-	fp = fopen("user.txt", "rb");
-	loadUser(fp);
-	fclose(fp);
-	fp = NULL;
 	// option
 	while (option != 5) {
 		printf("\nPlease choose an option: \n\n1. Register an account\n2. Login\n");

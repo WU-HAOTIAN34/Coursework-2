@@ -31,7 +31,7 @@ int borrowBook(user* theUser) {
 	printBook(library);
 	printf("Plesse enter the ID you want to borrow: ");
 	scanf("%s", enter);
-	option = (int)enter[0];
+	option = (int)enter[0] - 48;
 	if (strlen(enter) > 1 || (int)enter[0] < 49 || (int)enter[0]>57) {
 		printf("Invalid entering.\n");
 		return 0;
@@ -50,11 +50,7 @@ int borrowBook(user* theUser) {
 		if (theUser->bookNum == 0) {
 			theUser->bookNum += 1;
 			theUser->broBook = (Book*)malloc(sizeof(Book));
-			theUser->broBook->id = query->id;
-			strcpy(theUser->broBook->title, query->title);
-			strcpy(theUser->broBook->authors, query->authors);
-			theUser->broBook->year = query->year;
-			theUser->broBook->copies = query->copies;
+			copyNode(theUser->broBook, query);
 			return 1;
 		}
 		else {
@@ -65,18 +61,7 @@ int borrowBook(user* theUser) {
 			}
 			newBook->next = (Book*)malloc(sizeof(Book));
 			newBook = newBook->next;
-			newBook->id = query->id;
-			newBook->year = query->year;
-			newBook->copies = query->copies;
-			len = strlen(query->title);
-			newBook->title = (char*)malloc(sizeof(len + 1));
-			memset(newBook->title, '\0', len + 1);
-			strcpy(newBook->title, query->title);
-			len = strlen(query->authors);
-			newBook->authors = (char*)malloc(sizeof(len + 1));
-			memset(newBook->authors, '\0', len + 1);
-			strcpy(newBook->authors, query->authors);
-			newBook->next = NULL;
+			copyNode(newBook, query);
 			return 1;
 		}
 	}
@@ -103,9 +88,7 @@ void returnBook(user* theUser) {
 		if (newBook->id == option) {
 			theUser->bookNum -= 1;
 			theUser->broBook = NULL;
-			free(newBook->authors);
-			free(newBook->title);
-			free(&newBook);
+			freeNode(newBook);
 			printf("\nRevome successfully!\n");
 			while (query != NULL) {
 				if (query->id == option) {
@@ -124,9 +107,7 @@ void returnBook(user* theUser) {
 		if (newBook->id == option) {
 			theUser->bookNum -= 1;
 			theUser->broBook = newBook->next;
-			free(newBook->authors);
-			free(newBook->title);
-			free(&newBook);
+			freeNode(newBook);
 			printf("\nRevome successfully!\n");
 			while (query != NULL) {
 				if (query->id == option) {
@@ -140,9 +121,8 @@ void returnBook(user* theUser) {
 			if (newBook->next->id == option) {
 				if (newBook->next->next = NULL) {
 					theUser->bookNum -= 1;
-					free(newBook->next->title);
-					free(newBook->next->authors);
-					free(newBook->next);
+					freeNode(newBook->next);
+					
 					newBook->next = NULL;
 					printf("\nRevome successfully!\n");
 					while (query != NULL) {
@@ -157,8 +137,6 @@ void returnBook(user* theUser) {
 					theUser->bookNum -= 1;
 					temp = newBook->next;
 					newBook->next = newBook->next->next;
-					free(temp->authors);
-					free(temp->title);
 					free(temp);
 					printf("\nRevome successfully!\n");
 					while (query != NULL) {

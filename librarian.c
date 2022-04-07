@@ -6,23 +6,19 @@
 #include "interface.h"
 #include "librarian.h"
 
+void freeNode(Book* book) {
+	free(book->authors);
+	free(book->title);
+	free(book);
+}
 
-void freeSpace(Book* book) {
-	if (book->next == NULL) {
-		free(book->title);
-		free(book->authors);
-		free(&book);
-	}
-	else {
-		if (book->next->next == NULL) {
-			free(book->next->title);
-			free(book->next->authors);
-			free(book->next);
-			book->next = NULL;
-		}
-		else {
-			freeSpace(book->next);
-		}
+void freeList(BookList* list) {
+	Book* newBook = list->list;
+	Book* next;
+	while (newBook != NULL) {
+		next = newBook;
+		newBook = newBook->next;
+		freeNode(next);
 	}
 }
 
@@ -80,6 +76,7 @@ void searchModel() {
 				else {
 					printBook(&res);
 				}
+				freeList(&res);
 				break;
 			case 4:
 				break;

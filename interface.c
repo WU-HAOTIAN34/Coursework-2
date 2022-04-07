@@ -9,14 +9,29 @@
 
 
 int covertInt(char* str) {
-	int i;
+	int i, j, k = 1;
 	int len = strlen(str);
 	int res = 0;
 	for (int i = 0; i < len; i++) {
-		res += ((int)str[i] - 48) * (int)pow(10, len - i - 1);
+		for (j = 0; j < len - i - 1; j++) {
+			k *= 10;
+		}
+		res += ((int)str[i] - 48) * k;
+		k = 1;
 	}
 	return res;
 }
+
+
+//int covertInt(char* str) {
+//	int i;
+//	int len = strlen(str);
+//	int res = 0;
+//	for (int i = 0; i < len; i++) {
+//		res += ((int)str[i] - 48) * (int)pow(10, len - i - 1);
+//	}
+//	return res;
+//}
 
 
 int ifStrValid(char* str, int len) {

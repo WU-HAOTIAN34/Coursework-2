@@ -3,7 +3,12 @@
 
 
 void librarianModel();
+
 void searchModel();
+
+void freeList(BookList* list);
+
+void freeNode(Book* book);
 
 
 #endif

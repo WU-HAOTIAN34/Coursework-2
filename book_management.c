@@ -4,6 +4,7 @@
 #include <malloc.h>
 #include <stdio.h>
 #include <string.h>
+#include "librarian.h"
 
 
 
@@ -46,7 +47,7 @@ int load_books(FILE* file) {
 	library->list = (Book*)malloc(sizeof(Book));
 	newBook = library->list;
 	for (i = 0; i < library->length; i++) {
-		//load book id
+		//load book id			
 		fread(&(newBook->id), sizeof(unsigned int), 1, file);
 		// load title
 		fread(&(len), sizeof(int), 1, file);        // obtain the length of title
@@ -73,18 +74,21 @@ int load_books(FILE* file) {
 	return 1;
 }
 
-
+//copy a Book struct from source to an empty Book struct destination
 void copyNode(Book* destination, Book* source) {
 	int len;
 	destination->id = source->id;
+				//allocate and initialize the space and copy
 	len = strlen(source->title);
 	destination->title = (char*)malloc(sizeof(char) * (len + 1));
 	memset(destination->title, '\0', len + 1);
 	strcpy(destination->title, source->title);
+
 	len = strlen(source->authors);
 	destination->authors = (char*)malloc(sizeof(char) * (len + 1));
 	memset(destination->authors, '\0', len + 1);
 	strcpy(destination->authors, source->authors);
+	
 	destination->year = source->year;
 	destination->copies = source->copies;
 	destination->next = NULL;
@@ -194,9 +198,7 @@ int remove_book(Book book) {
 		if (newBook->id == book.id) {  
 			library->length -= 1;
 			library->list = NULL;
-			free(newBook->authors);
-			free(newBook->title);
-			free(newBook);
+			freeNode(newBook);
 			printf("\nRevome successfully!\n");
 			return 1;
 		}
@@ -209,9 +211,7 @@ int remove_book(Book book) {
 		if (newBook->id == book.id) {
 			library->length -= 1;
 			library->list = newBook->next;
-			free(newBook->authors);
-			free(newBook->title);
-			free(newBook);
+			freeNode(newBook);
 			printf("\nRevome successfully!\n");
 			return 1;
 		}
@@ -219,9 +219,7 @@ int remove_book(Book book) {
 			if (newBook->next->id == book.id) {
 				if (newBook->next->next == NULL) {
 					library->length -= 1;
-					free(newBook->next->title);
-					free(newBook->next->authors);
-					free(newBook->next);
+					freeNode(newBook->next);
 					newBook->next = NULL;
 					printf("\nRevome successfully!\n");
 					return 1;
@@ -230,9 +228,7 @@ int remove_book(Book book) {
 					library->length -= 1;
 					temp = newBook->next;
 					newBook->next = newBook->next->next;
-					free(temp->authors);
-					free(temp->title);
-					free(temp);
+					freeNode(temp);
 					printf("\nRevome successfully!\n");
 					return 1;
 				}

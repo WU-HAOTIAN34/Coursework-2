@@ -5,7 +5,7 @@
 #include "interface.h"
 #include "book_management.h"
 #include "user.h"
-
+#include "librarian.h"
 
 
 int main() {
@@ -20,6 +20,7 @@ int main() {
 	storeUser(fp);
 	fclose(fp);
 	fp = NULL;
+	freeList(library);
 	return 0;
 }
 

@@ -2,15 +2,18 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
+
 #include "book_management.h"
 #include "interface.h"
 #include "librarian.h"
+
 
 void freeNode(Book* book) {
 	free(book->authors);
 	free(book->title);
 	free(book);
 }
+
 
 void freeList(BookList* list) {
 	Book* newBook = list->list;
@@ -22,8 +25,10 @@ void freeList(BookList* list) {
 	}
 }
 
+
+
 void searchModel() {
-	BookList res;
+	BookList* res;
 	int year;
 	char findWay[100];
 	char enter[100];
@@ -46,46 +51,51 @@ void searchModel() {
 			case 1:
 				printf("Please enter the title: ");
 				scanf("%[^\n]s", findWay);
-				res = find_book_by_title(findWay);
-				if (res.length == 0) {
+				res = (BookList*)malloc(sizeof(BookList));
+				*res = find_book_by_title(findWay);
+				if (res->length == 0) {
 					printf("\nDon't find.\n");
 				}
 				else {
-					printBook(&res);
+					printBook(res);
 				}
+				freeList(res);
+				free(res);
 				break;
 			case 2:
 				printf("Please enter the author: ");
 				scanf("%[^\n]s", findWay);
-				res = find_book_by_author(findWay);
-				if (res.length == 0) {
+				res = (BookList*)malloc(sizeof(BookList));
+				*res = find_book_by_author(findWay);
+				if (res->length == 0) {
 					printf("\nDon't find.\n");
 				}
 				else {
-					printBook(&res);
+					printBook(res);
 				}
+				freeList(res);
+				free(res);
 				break;
 			case 3:
 				printf("Please enter the year: ");
 				scanf("%[^\n]s", findWay);
 				year = covertInt(findWay);
-				res = find_book_by_year(year);
-				if (res.length == 0) {
+				*res = find_book_by_year(year);
+				if (res->length == 0) {
 					printf("\nDon't find.\n");
 				}
 				else {
-					printBook(&res);
+					printBook(res);
 				}
-				freeList(&res);
+				freeList(res);
+				free(res);
 				break;
 			case 4:
-				break;
 			default:
 				break;
 			}
 		}
 	}
-	return;
 }
 
 
@@ -126,11 +136,9 @@ void librarianModel() {
 				printBook(library);
 				break;
 			case 5:
-				break;
 			default:
 				break;
 			}
 		}
 	}
-	return;
 }

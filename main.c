@@ -5,13 +5,13 @@
 #include "interface.h"
 #include "book_management.h"
 #include "user.h"
-#include "librarian.h"
+
 
 
 int main(int argc, char** argv) {
 	FILE* bookp;
 	FILE* userp;
-	if ((argc != 3) || !strcmp(argv[1], "book.txt") || !strcmp(argv[2], "user.txt")) {
+	if ((argc != 3) || strcmp(argv[1], "book.txt") || strcmp(argv[2], "user.txt")) {
 		printf("Error\nExpected use: ./library book.txt user.txt\n");
 	}
 	else {
@@ -43,10 +43,5 @@ int main(int argc, char** argv) {
 			userp = NULL;
 		}
 	}
-	freeList(library);
 	return 0;
 }
-
-
-
-

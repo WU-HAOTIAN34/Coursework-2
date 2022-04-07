@@ -7,11 +7,12 @@
 #include "librarian.h"
 #include "user.h"
 
-
+// covert a string which contains some character number into int number
 int covertInt(char* str) {
 	int i, j, k = 1;
 	int len = strlen(str);
 	int res = 0;
+	// calculate each digit of number
 	for (int i = 0; i < len; i++) {
 		for (j = 0; j < len - i - 1; j++) {
 			k *= 10;
@@ -23,20 +24,13 @@ int covertInt(char* str) {
 }
 
 
-//int covertInt(char* str) {
-//	int i;
-//	int len = strlen(str);
-//	int res = 0;
-//	for (int i = 0; i < len; i++) {
-//		res += ((int)str[i] - 48) * (int)pow(10, len - i - 1);
-//	}
-//	return res;
-//}
 
-
+//judge if the string is valid
+//a valid string consists of letters. Don't have contiguous Spaces, 
+//don't begin or end with space  
 int ifStrValid(char* str, int len) {
 	int i, a;
-	if (str[0] == ' ' || len == 0) {
+	if (str[0] == ' ' || len == 0 || str[len - 1] == ' ') {
 		return 0;
 	}
 	for (i = 0; i < len; i++) {

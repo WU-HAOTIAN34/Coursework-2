@@ -37,6 +37,7 @@ int store_books(FILE* file) {
 
 
 
+
 int load_books(FILE* file) {
 	if (file == NULL) {
 		return 0;
@@ -74,6 +75,9 @@ int load_books(FILE* file) {
 	return 1;
 }
 
+
+
+
 //copy a Book struct from source to an empty Book struct destination
 void copyNode(Book* destination, Book* source) {
 	int len;
@@ -96,13 +100,10 @@ void copyNode(Book* destination, Book* source) {
 
 
 
-
-
-
 int add_book(Book book) {
 	int len;
 	Book* newBook = library->list;
-	char id[10], year[10], copies[10], title[100], author[100];
+	char id[100], year[100], copies[100], title[100], author[100];
 	memset(id, '\0', 10);
 	memset(year, '\0', 10);
 	memset(copies, '\0', 10);
@@ -123,6 +124,8 @@ int add_book(Book book) {
 		printf("Ivalid title, fail to add.\n");
 		return 0;
 	}
+
+
 	printf("Please enter the author: ");
 	scanf("%s", author);
 	if (!(ifStrValid(author, strlen(author)))) {
@@ -131,6 +134,9 @@ int add_book(Book book) {
 	}
 	printf("Please enter the year (A number less than five digits): ");
 	scanf("%s", year);
+
+
+
 	if ((int)year[0] == 48 || strspn(year, "0123456789") != strlen(year) || strlen(year) >= 5 ||
 		strlen(year) <= 0) {
 		printf("Invalid year, fail to add.\n");

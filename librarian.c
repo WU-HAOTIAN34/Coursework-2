@@ -7,16 +7,16 @@
 #include "interface.h"
 #include "librarian.h"
 
-
+//  free a Book struct author title and itself
 void freeNode(Book* book) {
 	free(book->authors);
 	free(book->title);
 	free(book);
 }
 
-
-void freeList(BookList* list) {
-	Book* newBook = list->list;
+// free a list of book struct
+void freeList(Book* list) {
+	Book* newBook = list;
 	Book* next;
 	while (newBook != NULL) {
 		next = newBook;
@@ -25,8 +25,20 @@ void freeList(BookList* list) {
 	}
 }
 
+// free a list of  user struct
+void freeUser(userList* list) {
+	user* newUser = list->list;
+	user* next;
+	while (newUser != NULL) {
+		next = newUser;
+		newUser = newUser->next;
+		free(next->ID);
+		free(next->broBook);
+		free(next);
+	}
+}
 
-
+// the interface of seach book
 void searchModel() {
 	BookList* res;
 	int year;
@@ -40,6 +52,7 @@ void searchModel() {
 		printf("3. Find books by year\n4. Quit\nOption: ");
 		scanf("%s", enter);
 		getchar();
+		// judge if the option is valid
 		option = (int)enter[0];
 		if (strlen(enter) > 1 || option <= 48 || option >= 53) {
 			printf("Sorry, the option you entered was invalid, please try again.");
@@ -53,13 +66,15 @@ void searchModel() {
 				scanf("%[^\n]s", findWay);
 				res = (BookList*)malloc(sizeof(BookList));
 				*res = find_book_by_title(findWay);
+				   // print searched booklist
 				if (res->length == 0) {
 					printf("\nDon't find.\n");
 				}
 				else {
 					printBook(res);
 				}
-				freeList(res);
+				//   free the searched booklist
+				freeList(res->list);
 				free(res);
 				break;
 			case 2:
@@ -73,7 +88,7 @@ void searchModel() {
 				else {
 					printBook(res);
 				}
-				freeList(res);
+				freeList(res->list);
 				free(res);
 				break;
 			case 3:
@@ -87,7 +102,7 @@ void searchModel() {
 				else {
 					printBook(res);
 				}
-				freeList(res);
+				freeList(res->list);
 				free(res);
 				break;
 			case 4:
@@ -100,7 +115,7 @@ void searchModel() {
 
 
 
-
+// the interface after librarian login
 void librarianModel() {
 	Book* book; 
 	char enter[100];

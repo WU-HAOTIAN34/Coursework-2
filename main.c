@@ -11,10 +11,12 @@
 int main(int argc, char** argv) {
 	FILE* bookp;
 	FILE* userp;
+	// judge if the command line parameter is correct
 	if ((argc != 3) || strcmp(argv[1], "book.txt") || strcmp(argv[2], "user.txt")) {
 		printf("Error\nExpected use: ./library book.txt user.txt\n");
 	}
 	else {
+		//judge if the files exist
 		bookp = fopen(argv[1], "rb");
 		userp = fopen(argv[2], "rb");
 		if (bookp == NULL) {
@@ -24,6 +26,7 @@ int main(int argc, char** argv) {
 			printf("Error\nFile user.txt doesn't exist.");
 		}
 		else {
+			//enter the program load file and build list
 			member = (userList*)malloc(sizeof(userList));
 			library = (BookList*)malloc(sizeof(BookList));
 			load_books(bookp);
@@ -33,6 +36,7 @@ int main(int argc, char** argv) {
 			bookp = NULL;
 			userp = NULL;
 			interface();
+			// exit program store information and free list
 			bookp = fopen("book.txt", "wb+");
 			store_books(bookp);
 			fclose(bookp);
@@ -41,7 +45,12 @@ int main(int argc, char** argv) {
 			storeUser(userp);
 			fclose(userp);
 			userp = NULL;
+			freeList(library->list);
+			free(library);
+			freeUser(member);
+			free(member);
 		}
 	}
 	return 0;
 }
+

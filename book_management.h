@@ -28,27 +28,24 @@ typedef struct _BookList {
 }BookList;
 
 
-
-
-
-
 typedef struct User {
-	char* ID;
-	char password[9];
-	int bookNum;
-	Book* broBook;
-	struct User* next;
+	char* ID;           // the ID of the user
+	char password[9];   // the password which consists of 8 digits
+	int bookNum;        // the number of borrowed books
+	Book* broBook;		// the list of borrowed books
+	struct User* next;	// pointer to the next user
 }user;
 
 typedef struct _userList {
-	int userNum;
-	user* list;
+	int userNum;		// the number of users
+	user* list;			//the list of users
 }userList;
 
-userList* member;
-BookList* library;
+userList* member;        // the list of users
+BookList* library;       // the list of books
 
 
+//copy a Book struct from source to an empty Book struct destination
 void copyNode(Book* destination, Book* source);
 
 //saves the database of books in the specified file

@@ -7,6 +7,7 @@
 #include "librarian.h"
 #include "user.h"
 
+
 // covert a string which contains some character number into int number
 int covertInt(char* str) {
 	int i, j, k = 1;
@@ -50,27 +51,33 @@ int ifStrValid(char* str, int len) {
 
 
 
-
+// load the imformation of users 
+// return 0 if the file has been modified or corrupted
 int loadUser(FILE* file) {
-	if (file == NULL) {
-		return 0;
-	}
+	char x;
 	int i, j, len;
 	Book* newBook;
 	member->list = (user*)malloc(sizeof(user));
 	user* newUser = member->list;
-	fread(&(member->userNum), sizeof(int), 1, file);
+	 // load the number of user
+	if (fread(&(member->userNum), sizeof(int), 1, file) == 0) {
+		return 0;
+	}
 	for (i = 0; i < member->userNum; i++) {
-		fread(&len, sizeof(int), 1, file);     // load the length of ID
-		//copy ID
+				// the information of the user
+		if (fread(&len, sizeof(int), 1, file) == 0) {
+			return 0;					// length of ID
+		}	    
 		newUser->ID = (char*)malloc(sizeof(char) * (len + 1));
 		memset(newUser->ID, '\0', len + 1);
-		fread(newUser->ID, sizeof(char), len, file);
-		//load password and borrowed book number
 		memset(newUser->password, '\0', 9);
-		fread(newUser->password, sizeof(char), 8, file);
-		fread(&(newUser->bookNum), sizeof(int), 1, file);
-		         //load borrowed books
+
+		if (fread(newUser->ID, sizeof(char), len, file) == 0 || 
+			fread(newUser->password, sizeof(char), 8, file) == 0 ||
+			fread(&(newUser->bookNum), sizeof(int), 1, file) == 0) {
+			return 0;
+		}		
+		         //load the user's borrowed books
 		if (newUser->bookNum == 0) {
 			newUser->broBook = NULL;
 		}
@@ -78,20 +85,24 @@ int loadUser(FILE* file) {
 			newUser->broBook = (Book*)malloc(sizeof(Book));
 			newBook = newUser->broBook;
 			for (j = 0; j < newUser->bookNum; j++) {
-				//load book id
-				fread(&(newBook->id), sizeof(unsigned int), 1, file);
-				// load title
-				fread(&(len), sizeof(int), 1, file);        // obtain the length of title
+						//allocate and initialize the space of title and load
+				if (fread(&(newBook->id), sizeof(unsigned int), 1, file) == 0 || 
+					fread(&(len), sizeof(int), 1, file) == 0) {          // title length
+					return 0;
+				}
 				newBook->title = (char*)malloc(sizeof(char) * (len + 1));
 				memset(newBook->title, '\0', len + 1);      // fill in \0 to initialize
-				fread(newBook->title, sizeof(char), len, file);  //load
-				// load author
-				fread(&(len), sizeof(int), 1, file);
+				if (fread(newBook->title, sizeof(char), len, file) == 0 || 
+					fread(&(len), sizeof(int), 1, file) == 0) {
+					return 0;
+				}
+								//author
 				newBook->authors = (char*)malloc(sizeof(char) * (len + 1));
 				memset(newBook->authors, '\0', len + 1);
-				fread(newBook->authors, sizeof(char), len, file);
-				// year and copies
-				fread(&(newBook->year), sizeof(unsigned int), 2, file);
+				if (fread(newBook->authors, sizeof(char), len, file) == 0 || 
+					fread(&(newBook->year), sizeof(unsigned int), 2, file) == 0) {
+					return 0;
+				}				
 				//judge if is the last member
 				if (j == newUser->bookNum - 1) {
 					newBook->next = NULL;
@@ -113,25 +124,26 @@ int loadUser(FILE* file) {
 			newUser = newUser->next;
 		}
 	}
+	if (fread(&x, sizeof(char), 1, file) != 0) {
+		return 0;
+	}
 	return 1;
 }
 
 
 
+// store the imformation of user to the file
 int storeUser(FILE* file) {
-	if (file == NULL) {
-		return 0;
-	}
+	
 	int len;
 	Book* newBook;
 	user* newUser = member->list;
 	fwrite(&(member->userNum), sizeof(int), 1, file);
 	while (newUser != NULL) {
-		// write user's id
-		len = strlen(newUser->ID);   // obtain the length of id
-		// store length
-		fwrite(&len, sizeof(int), 1, file); 
-		fwrite(newUser->ID, sizeof(char), len, file);  //store id
+		// store user's information
+		len = strlen(newUser->ID);   
+		fwrite(&len, sizeof(int), 1, file);      // obtain and storethe length of id
+		fwrite(newUser->ID, sizeof(char), len, file); 
 		//store password and book number
 		fwrite(newUser->password, sizeof(char), 8, file);
 		fwrite(&(newUser->bookNum), sizeof(int), 1, file);
@@ -139,18 +151,15 @@ int storeUser(FILE* file) {
 		if (newUser->bookNum != 0) {
 			newBook = newUser->broBook;
 			while (newBook != NULL) {
-				// write id
 				fwrite(&(newBook->id), sizeof(unsigned int), 1, file);
-				// write title
 				len = strlen(newBook->title);  // obtain the length of title
-				// write the length because loading the title need to know the length of the string		
+				// store the length because loading the title need to know the length of the string		
 				fwrite(&(len), sizeof(int), 1, file);
-				fwrite(newBook->title, sizeof(char), len, file);  // write title
-				//   write author
+				fwrite(newBook->title, sizeof(char), len, file); 
+				//    author
 				len = strlen(newBook->authors);
 				fwrite(&(len), sizeof(int), 1, file);
 				fwrite(newBook->authors, sizeof(char), len, file);
-				// year and copies
 				fwrite(&(newBook->year), sizeof(unsigned int), 2, file);
 				newBook = newBook->next;
 			}
@@ -162,7 +171,7 @@ int storeUser(FILE* file) {
 
 
 
-
+// print the book list 
 void printBook(BookList* book) {
 	int i;
 	Book* newBook = book->list;
@@ -177,7 +186,7 @@ void printBook(BookList* book) {
 
 
 
-
+// the register a user 
 int registerModel() {
 	int len;
 	char ID[100];
@@ -185,6 +194,7 @@ int registerModel() {
 	memset(ID, '\0', 100);
 	memset(password, '\0', 100);
 	user* newUser = member->list;
+	// judge if is a valid ID
 	printf("Please enter your ID (Consists of letters): ");
 	scanf("%[^\n]s", ID);
 	if (!ifStrValid(ID, strlen(ID))) {
@@ -198,6 +208,7 @@ int registerModel() {
 		}
 		newUser = newUser->next;
 	}
+	// compare with the last node
 	if (!strcmp(newUser->ID, ID)) {
 		printf("The ID has existed, fail to register.");
 		return 0;
@@ -208,6 +219,7 @@ int registerModel() {
 		printf("\nInvalid password, fail to register.\n");
 		return 0;
 	}
+	// store the imformation of new user
 	newUser->next = (user*)malloc(sizeof(user));
 	newUser = newUser->next;
 	member->userNum += 1;
@@ -227,7 +239,7 @@ int registerModel() {
 
 
 
-
+// used for user login
 int signModel() {
 	char ID[100];
 	char password[100];
@@ -243,6 +255,7 @@ int signModel() {
 			scanf("%[^\n]s", password);
 			if (!strcmp(password, newUser->password)) {
 				printf("\nLogin successfully!\n");
+				// judge is a common user or the librarian
 				if (!strcmp(newUser->ID, "librarian")) {
 					librarianModel();
 					return 1;
@@ -265,12 +278,12 @@ int signModel() {
 
 
 
-
+// print the interface of the program
 void interface() {
 	char enter[100];
 	int option = 0;
 	memset(enter, '\0', 100);
-	//        load book list and user list
+	
 	// option
 	while (option != 5) {
 		printf("\nPlease choose an option: \n\n1. Register an account\n2. Login\n");
@@ -298,7 +311,6 @@ void interface() {
 				printBook(library);
 				break;
 			case 5:
-				break;
 			default:
 				break;
 			}

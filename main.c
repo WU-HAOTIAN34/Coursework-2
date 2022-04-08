@@ -9,6 +9,7 @@
 
 
 int main(int argc, char** argv) {
+	int a, b;
 	FILE* bookp;
 	FILE* userp;
 	// judge if the command line parameter is correct
@@ -20,37 +21,43 @@ int main(int argc, char** argv) {
 		bookp = fopen(argv[1], "rb");
 		userp = fopen(argv[2], "rb");
 		if (bookp == NULL) {
-			printf("Error\nFile book.txt doesn't exist.");
+			printf("Error\nFile book.txt doesn't exist.\n");
 		}
 		else if (userp == NULL) {
-			printf("Error\nFile user.txt doesn't exist.");
+			printf("Error\nFile user.txt doesn't exist.\n");
 		}
 		else {
 			//enter the program load file and build list
 			member = (userList*)malloc(sizeof(userList));
 			library = (BookList*)malloc(sizeof(BookList));
-			load_books(bookp);
-			loadUser(userp);
+			a = load_books(bookp);
+			b = loadUser(userp);
 			fclose(bookp);
 			fclose(userp);
 			bookp = NULL;
 			userp = NULL;
-			interface();
-			// exit program store information and free list
-			bookp = fopen("book.txt", "wb+");
-			store_books(bookp);
-			fclose(bookp);
-			bookp = NULL;
-			userp = fopen("user.txt", "wb+");
-			storeUser(userp);
-			fclose(userp);
-			userp = NULL;
-			freeList(library->list);
-			free(library);
-			freeUser(member);
-			free(member);
+			if (a == 0 || b == 0) {
+				printf("Error\nThe file has been modified or corrupted\n");
+			}
+			else {
+				interface();
+				// exit program store information and free list
+				bookp = fopen("book.txt", "wb+");
+				store_books(bookp);
+				fclose(bookp);
+				bookp = NULL;
+				userp = fopen("user.txt", "wb+");
+				storeUser(userp);
+				fclose(userp);
+				userp = NULL;
+				freeList(library->list);
+				free(library);
+				freeUser(member);
+				free(member);
+			}
 		}
 	}
 	return 0;
 }
+
 

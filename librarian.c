@@ -95,6 +95,7 @@ void searchModel() {
 				printf("Please enter the year: ");
 				scanf("%[^\n]s", findWay);
 				year = covertInt(findWay);
+				res = (BookList*)malloc(sizeof(BookList));
 				*res = find_book_by_year(year);
 				if (res->length == 0) {
 					printf("\nDon't find.\n");

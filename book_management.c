@@ -5,30 +5,24 @@
 #include <stdio.h>
 #include <string.h>
 #include "librarian.h"
-
+#include "user.h"
 
 
 
 int store_books(FILE* file) {
-	if (file == NULL) {
-		return 0;
-	}
 	int len;
 	Book* newBook = library->list;
-	fwrite(&library->length, sizeof(unsigned int), 1, file);   // write the book number
+	fwrite(&library->length, sizeof(unsigned int), 1, file);   // store the book number
 	while (newBook != NULL) {
-		// write id
 		fwrite(&(newBook->id), sizeof(unsigned int), 1, file);
-		// write title
-		len = strlen(newBook->title);  // obtain the length of title
-		// write the length because loading the title need to know the length of the string		
+		// store the length of title and itself
+		len = strlen(newBook->title);  // obtain the length of title	
 		fwrite(&(len), sizeof(int), 1, file);   
 		fwrite(newBook->title, sizeof(char), len, file);  // write title
-		//   write author
+		//    author
 		len = strlen(newBook->authors);
 		fwrite(&(len), sizeof(int), 1, file);
 		fwrite(newBook->authors, sizeof(char), len, file);
-		// year and copies
 		fwrite(&(newBook->year), sizeof(unsigned int), 2, file);
 		newBook = newBook->next;
 	}
@@ -39,30 +33,34 @@ int store_books(FILE* file) {
 
 
 int load_books(FILE* file) {
-	if (file == NULL) {
-		return 0;
-	}
+	char x;
 	int len, i;
 	Book* newBook;
-	fread(&(library->length), sizeof(unsigned int), 1, file);
+	if (fread(&(library->length), sizeof(unsigned int), 1, file) == 0) {
+		return 0;		//load the number of book
+	}
 	library->list = (Book*)malloc(sizeof(Book));
 	newBook = library->list;
 	for (i = 0; i < library->length; i++) {
-		//load book id			
-		fread(&(newBook->id), sizeof(unsigned int), 1, file);
-		// load title
-		fread(&(len), sizeof(int), 1, file);        // obtain the length of title
-		newBook->title = (char*)malloc(sizeof(char) * (len + 1)); //open space +1 because need an end character \0
+		
+		if (fread(&(newBook->id), sizeof(unsigned int), 1, file) == 0 ||
+			fread(&(len), sizeof(int), 1, file) == 0) {	      //length of title
+			return 0;
+		}
+		        //allocate and initialize the space of title and load
+		newBook->title = (char*)malloc(sizeof(char) * (len + 1)); 
 		memset(newBook->title, '\0', len + 1);        //   initialize by '\0'
-		fread(newBook->title, sizeof(char), len, file);   //load
-		//   load author
-		fread(&(len), sizeof(int), 1, file);
+		if (fread(newBook->title, sizeof(char), len, file) == 0 ||
+			fread(&(len), sizeof(int), 1, file) == 0) {
+			return 0;
+		}
+			//author
 		newBook->authors = (char*)malloc(sizeof(char) * (len + 1));
 		memset(newBook->authors, '\0', len + 1);
-		fread(newBook->authors, sizeof(char), len, file);
-		// year and copies
-		fread(&(newBook->year), sizeof(unsigned int), 2, file);
-		       // judge if is the last one 
+		if (fread(newBook->authors, sizeof(char), len, file) == 0 ||
+			fread(&(newBook->year), sizeof(unsigned int), 2, file) == 0) {
+			return 0;
+		}
 		if (i == library->length - 1) {
 			newBook->next = NULL;
 			break;
@@ -71,6 +69,9 @@ int load_books(FILE* file) {
 			newBook->next = (Book*)malloc(sizeof(Book));
 			newBook = newBook->next;
 		}
+	}
+	if (fread(&x, sizeof(char), 1, file) != 0) {
+		return 0;
 	}
 	return 1;
 }
@@ -109,34 +110,41 @@ int add_book(Book book) {
 	memset(copies, '\0', 10);
 	memset(title, '\0', 100);
 	memset(author, '\0', 100);
+	//judge if the ID is valid
 	printf("Please enter the ID (A number less than five digits and don't start with 0): ");
-	scanf("%s", id);
+	scanf("%[^\n]s", id);
+	getchar();
 	if ((int)id[0] == 48 || strspn(id, "0123456789") != strlen(id) || strlen(id) >= 5 || strlen(id) <= 0) {
 		printf("Invalid id, fail to add.\n");
+		return 0;
+	}
+	else if (findBook(library->list, covertInt(id)) != NULL) {
+		printf("The ID has existed, fail to add.");
 		return 0;
 	}
 	else {
 		book.id = covertInt(id);
 	}
+	//judge if the title is valid
 	printf("Please enter the title: ");
-	scanf("%s", title);
+	scanf("%[^\n]s", title);
+	getchar();
 	if (!(ifStrValid(title, strlen(title)))){
 		printf("Ivalid title, fail to add.\n");
 		return 0;
 	}
-
-
+	//judge if the author is valid
 	printf("Please enter the author: ");
-	scanf("%s", author);
+	scanf("%[^\n]s", author);
+	getchar();
 	if (!(ifStrValid(author, strlen(author)))) {
 		printf("Ivalid author, fail to add.\n");
 		return 0;
 	}
+	//judge if the year is valid
 	printf("Please enter the year (A number less than five digits): ");
-	scanf("%s", year);
-
-
-
+	scanf("%[^\n]s", year);
+	getchar();
 	if ((int)year[0] == 48 || strspn(year, "0123456789") != strlen(year) || strlen(year) >= 5 ||
 		strlen(year) <= 0) {
 		printf("Invalid year, fail to add.\n");
@@ -149,6 +157,7 @@ int add_book(Book book) {
 			return 0;
 		}
 	}
+	//judge if the copies is valid
 	printf("Please enter the copies (Less than 1000): ");
 	scanf("%s", copies);
 	if ((int)copies[0] == 48 || strspn(copies, "0123456789") != strlen(copies) || 
@@ -163,6 +172,7 @@ int add_book(Book book) {
 			return 0;
 		}
 	}
+	// find the last node and add
 	while (newBook->next != NULL) {
 		newBook = newBook->next;
 	}
@@ -200,6 +210,7 @@ int remove_book(Book book) {
 	else {
 		book.id = covertInt(id);
 	}
+	// find the first node
 	if (newBook->next == NULL) {
 		if (newBook->id == book.id) {  
 			library->length -= 1;
@@ -221,6 +232,7 @@ int remove_book(Book book) {
 			printf("\nRevome successfully!\n");
 			return 1;
 		}
+			// if is the last node
 		while (newBook->next != NULL) {
 			if (newBook->next->id == book.id) {
 				if (newBook->next->next == NULL) {
@@ -231,6 +243,7 @@ int remove_book(Book book) {
 					return 1;
 				}
 				else {
+					 // if the node is among the list
 					library->length -= 1;
 					temp = newBook->next;
 					newBook->next = newBook->next->next;
@@ -256,7 +269,7 @@ BookList find_book_by_title(const char* title) {
 	res->list = (Book*)malloc(sizeof(Book));
 	Book* newBook = res->list;
 	newBook->next = NULL;
-	
+	// query the library book list and copy 
 	Book* query = library->list;
 	while (query != NULL) {
 		if (!strcmp(query->title, title)) {
@@ -268,7 +281,10 @@ BookList find_book_by_title(const char* title) {
 		}
 		query = query->next;
 	}
+			//    mark the last node
 	res->length = num;
+	newBook->authors = (char*)malloc(sizeof(char));
+	newBook->title = (char*)malloc(sizeof(char));
 	return *res;
 }
 
@@ -281,7 +297,7 @@ BookList find_book_by_author(const char* author) {
 	res->list = (Book*)malloc(sizeof(Book));
 	Book* newBook = res->list;
 	newBook->next = NULL;
-
+	// query the library book list and copy 
 	Book* query = library->list;
 	while (query != NULL) {
 		if (!strcmp(query->authors, author)) {
@@ -293,7 +309,10 @@ BookList find_book_by_author(const char* author) {
 		}
 		query = query->next;
 	}
+	//    mark the last node
 	res->length = num;
+	newBook->authors = (char*)malloc(sizeof(char));
+	newBook->title = (char*)malloc(sizeof(char));
 	return *res;
 }
 
@@ -306,6 +325,7 @@ BookList find_book_by_year(unsigned int year) {
 	res->list = (Book*)malloc(sizeof(Book));
 	Book* newBook = res->list;
 	newBook->next = NULL;
+	// query the library book list and copy 
 	Book* query = library->list;
 	while (query != NULL) {
 		if (query->year == year) {
@@ -317,7 +337,10 @@ BookList find_book_by_year(unsigned int year) {
 		}
 		query = query->next;
 	}
+	//    mark the last node
 	res->length = num;
+	newBook->authors = (char*)malloc(sizeof(char));
+	newBook->title = (char*)malloc(sizeof(char));
 	return *res;
 }
 

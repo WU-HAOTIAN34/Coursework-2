@@ -55,18 +55,19 @@ void searchModel() {
 		// judge if the option is valid
 		option = (int)enter[0];
 		if (strlen(enter) > 1 || option <= 48 || option >= 53) {
-			printf("Sorry, the option you entered was invalid, please try again.");
+			printf("\033[47;31mSorry, the option you entered was invalid, please try again.\033[0m");
 		}
 		else {
 			option -= 48;
 			switch (option)
 			{
 			case 1:
-				printf("Please enter the title: ");
+				printf("\nPlease enter the title: ");
 				scanf("%[^\n]s", findWay);
+				getchar();
 				res = (BookList*)malloc(sizeof(BookList));
 				*res = find_book_by_title(findWay);
-				   // print searched booklist
+				// print searched booklist
 				if (res->length == 0) {
 					printf("\nDon't find.\n");
 				}
@@ -78,8 +79,9 @@ void searchModel() {
 				free(res);
 				break;
 			case 2:
-				printf("Please enter the author: ");
+				printf("\nPlease enter the author: ");
 				scanf("%[^\n]s", findWay);
+				getchar();
 				res = (BookList*)malloc(sizeof(BookList));
 				*res = find_book_by_author(findWay);
 				if (res->length == 0) {
@@ -92,8 +94,9 @@ void searchModel() {
 				free(res);
 				break;
 			case 3:
-				printf("Please enter the year: ");
+				printf("\nPlease enter the year: ");
 				scanf("%[^\n]s", findWay);
+				getchar();
 				year = covertInt(findWay);
 				res = (BookList*)malloc(sizeof(BookList));
 				*res = find_book_by_year(year);
@@ -118,18 +121,18 @@ void searchModel() {
 
 // the interface after librarian login
 void librarianModel() {
-	Book* book; 
+	Book* book;
 	char enter[100];
 	int option = 0;
 	memset(enter, '\0', 100);
 	while (option != 5) {
 		printf("\nPlease choose an option: \n\n1. Add book\n2. Remove book\n");
 		printf("3. Search for books\n4. Display all books\n5. Quit\nOption: ");
-		scanf("%s", enter);
+		scanf("%[^\n]s", enter);
 		getchar();
 		option = (int)enter[0];
 		if (strlen(enter) > 1 || option <= 48 || option >= 54) {
-			printf("Sorry, the option you entered was invalid, please try again.");
+			printf("\033[47;31mSorry, the option you entered was invalid, please try again.\033[0m\n");
 		}
 		else {
 			option -= 48;
@@ -158,3 +161,4 @@ void librarianModel() {
 		}
 	}
 }
+

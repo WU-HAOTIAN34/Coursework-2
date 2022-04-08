@@ -37,41 +37,44 @@ void printUserBook(user* user) {
 
 // borrow a book from the library
 int borrowBook(user* theUser) {
-	int option,len;
+	int option, len;
 	char enter[40];
 	Book* query;
 	Book* newBook;
 	memset(enter, '\0', 40);
 	printBook(library);
-	printf("Plesse enter the ID you want to borrow: ");
-	scanf("%s", enter);
+	printf("\nPlesse enter the ID you want to borrow: ");
+	scanf("%[^\n]s", enter);
+	getchar();
 	if ((int)enter[0] == 48 || strspn(enter, "0123456789") != strlen(enter) || strlen(enter) >= 5 || strlen(enter) <= 0) {
-		printf("Invalid entering.\n");
+		printf("\033[47;31mInvalid Id, fail to brorrow.\033[0m\n");
+		printf("Expected ID: consist of less than 5 digits number, and don't start with 0.\n");
 		return 0;
 	}
 	option = covertInt(enter);
 	// judge if have borrowed the book
 	if (findBook(theUser->broBook, option) != NULL) {
-		printf("You have borrowed this book.\n");
+		printf("\033[47;31mYou have borrowed this book.\033[0m\n");
 		return 0;
 	}
 	// judge the book if exists and if the copy == 0 then obtain its address
 	query = findBook(library->list, option);
-	if ( query == NULL) {
-		printf("The book does not exist.\n");
+	if (query == NULL) {
+		printf("\033[47;31mThe book does not exist.\033[0m\n");
 		return 0;
 	}
 	else {
 		if (query->copies == 0) {
-			printf("This book has been checked out.");
+			printf("\033[47;31mThis book has been checked out.\033[0m");
 			return 0;
 		}
-			// copy the book to the user's borrowed list
+		// copy the book to the user's borrowed list
 		query->copies -= 1;
 		if (theUser->bookNum == 0) {
 			theUser->bookNum += 1;
 			theUser->broBook = (Book*)malloc(sizeof(Book));
 			copyNode(theUser->broBook, query);
+			printf("\nBorrow book successfully!\n");
 			return 1;
 		}
 		else {
@@ -83,10 +86,12 @@ int borrowBook(user* theUser) {
 			newBook->next = (Book*)malloc(sizeof(Book));
 			newBook = newBook->next;
 			copyNode(newBook, query);
+			printf("\nBorrow book successfully!\n");
 			return 1;
 		}
 	}
 }
+
 
 // return a book from the user's borrowed book list
 int returnBook(user* theUser) {
@@ -100,10 +105,11 @@ int returnBook(user* theUser) {
 		printf("You didn't borrow any book.\n");
 		return;
 	}
-	printf("Please enter the ID you want to return: ");
+	printf("\nPlease enter the ID you want to return: ");
 	scanf("%[^\n]s", id);
 	if ((int)id[0] == 48 || strspn(id, "0123456789") != strlen(id) || strlen(id) >= 5 || strlen(id) <= 0) {
-		printf("Invalid id\n");
+		printf("\033[47;31mInvalid Id, fail to return.\033[0m\n");
+		printf("Expected ID: consist of less than 5 digits number, and don't start with 0.\n");
 		return 0;
 	}
 	else {
@@ -125,7 +131,7 @@ int returnBook(user* theUser) {
 			return 1;
 		}
 		else {
-			printf("The book doesn't exist.");
+			printf("\033[47;31mThe book doesn't exist.\033[0m\n");
 			return 0;
 		}
 	}
@@ -143,13 +149,13 @@ int returnBook(user* theUser) {
 			}
 			return 1;
 		}
-			// judge if is the last node
+		// judge if is the last node
 		while (newBook->next != NULL) {
 			if (newBook->next->id == option) {
 				if (newBook->next->next = NULL) {
 					theUser->bookNum -= 1;
 					freeNode(newBook->next);
-					
+
 					newBook->next = NULL;
 					printf("\nReturn successfully!\n");
 					while (query != NULL) {
@@ -179,7 +185,7 @@ int returnBook(user* theUser) {
 			}
 			newBook = newBook->next;
 		}
-		printf("The book doesn't exist.");
+		printf("\033[47;31mThe book doesn't exist.\033[0m\n");
 		return 0;
 	}
 
@@ -196,11 +202,11 @@ void userModel(user* signUser) {
 	while (option != 6) {
 		printf("\nPlease choose an option: \n\n1. Borrow book\n2. Return book\n");
 		printf("3. Search for books\n4. Display all books\n5. Show my books\n6. Quit\nOption: ");
-		scanf("%s", enter);
+		scanf("%[^\n]s", enter);
 		getchar();
 		option = (int)enter[0];
 		if (strlen(enter) > 1 || option <= 48 || option >= 55) {
-			printf("Sorry, the option you entered was invalid, please try again.");
+			printf("\033[47;31mSorry, the option you entered was invalid, please try again.\033[0m\n");
 		}
 		else {
 			option -= 48;

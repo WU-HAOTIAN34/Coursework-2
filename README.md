@@ -1,8 +1,12 @@
 # PPCWK1
 Programming project coursework1
-https://github.com/WuHaoTian12/PPCWK1.git
+
+The URL of my git repositoryhttps: //github.com/WuHaoTian12/PPCWK1.git
 
 Enter ./library book.txt user.txt to begin
-![2022-04-08_071256](https://user-images.githubusercontent.com/101766788/162334589-c597530e-b605-4484-a626-3b5aff9c448e.png)
-![2022-04-08_071328](https://user-images.githubusercontent.com/101766788/162334441-e1f29560-ee16-42d8-ad1a-a3f46976341e.png)
-![2022-04-08_071400](https://user-images.githubusercontent.com/101766788/162334447-5a6fb9f0-7e62-4338-974f-edf3ab9e4970.png)
+
+
+![2022-04-08_151037](https://user-images.githubusercontent.com/101766788/162383668-98bffc2f-9b6c-4e45-9763-2c39792baa37.png)
+![2022-04-08_151125](https://user-images.githubusercontent.com/101766788/162383676-29103bef-80d5-443e-acc5-1f785ed4f3ea.png)
+![2022-04-08_151212](https://user-images.githubusercontent.com/101766788/162383689-f3ad2733-7138-4052-ae68-9eea48301bb1.png)
+![2022-04-08_151231](https://user-images.githubusercontent.com/101766788/162383706-9d6b79b7-8d4c-417f-869f-cee6a777873a.png)

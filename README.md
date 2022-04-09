@@ -5,13 +5,7 @@ The URL of my git repositoryhttps: https://github.com/WuHaoTian12/PPCWK1.git
 
 Enter ./library book.txt user.txt to begin
 
-Users: ID               Password
-       librarian        11111111
-       Wu               22222222
-       Hao              33333333
-       Tian             44444444
-       Wu Haotian       55555555
-       Haotian Wu       77777777
+Users: ID Password librarian 11111111 Wu 22222222 Hao 33333333 Tian 44444444 Wu Haotian 55555555 Haotian Wu 77777777
        
 
 ![2022-04-09_105756](https://user-images.githubusercontent.com/101766788/162554021-630e552e-be79-4334-b51e-6a3395b62f82.png)

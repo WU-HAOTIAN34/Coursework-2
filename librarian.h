@@ -14,4 +14,7 @@ void searchModel();
 
 // the interface after librarian login
 void librarianModel();
+
+//chech if the book ID is valid
+int checkID(char* id);
 #endif

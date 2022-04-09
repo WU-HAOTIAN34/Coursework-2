@@ -37,18 +37,18 @@ void printUserBook(user* user) {
 
 // borrow a book from the library
 int borrowBook(user* theUser) {
-	int option, len;
-	char enter[40];
-	Book* query;
-	Book* newBook;
+	int option;
+	char enter[40];		// recive the entering 
+	Book* query;		// match book in the library
+	Book* newBook;		// new book node in user
 	memset(enter, '\0', 40);
 	printBook(library);
 	printf("\nPlesse enter the ID you want to borrow: ");
 	scanf("%[^\n]s", enter);
 	getchar();
-	if ((int)enter[0] == 48 || strspn(enter, "0123456789") != strlen(enter) || strlen(enter) >= 5 || strlen(enter) <= 0) {
+	if (checkID(enter)) {
 		printf("\033[47;31mInvalid Id, fail to brorrow.\033[0m\n");
-		printf("Expected ID: consist of less than 5 digits number, and don't start with 0.\n");
+		printf("Expected ID: a number less than 5 digits. Don't start with 0,\ndon't start or end with a space.\n");
 		return 0;
 	}
 	option = covertInt(enter);
@@ -60,7 +60,7 @@ int borrowBook(user* theUser) {
 	// judge the book if exists and if the copy == 0 then obtain its address
 	query = findBook(library->list, option);
 	if (query == NULL) {
-		printf("\033[47;31mThe book does not exist.\033[0m\n");
+		printf("\033[47;31mThis book does not exist.\033[0m\n");
 		return 0;
 	}
 	else {
@@ -96,20 +96,17 @@ int borrowBook(user* theUser) {
 // return a book from the user's borrowed book list
 int returnBook(user* theUser) {
 	char id[100];
-	int option, i;
+	int option;
 	Book* temp;
 	Book* query = library->list;
 	Book* newBook = theUser->broBook;
 	memset(id, '\0', 100);
-	if (theUser->bookNum == 0) {
-		printf("You didn't borrow any book.\n");
-		return;
-	}
 	printf("\nPlease enter the ID you want to return: ");
 	scanf("%[^\n]s", id);
-	if ((int)id[0] == 48 || strspn(id, "0123456789") != strlen(id) || strlen(id) >= 5 || strlen(id) <= 0) {
+	getchar();
+	if (checkID(id)) {
 		printf("\033[47;31mInvalid Id, fail to return.\033[0m\n");
-		printf("Expected ID: consist of less than 5 digits number, and don't start with 0.\n");
+		printf("Expected ID: a number less than 5 digits. Don't start with 0,\ndon't start or end with a space.\n");
 		return 0;
 	}
 	else {
@@ -131,7 +128,7 @@ int returnBook(user* theUser) {
 			return 1;
 		}
 		else {
-			printf("\033[47;31mThe book doesn't exist.\033[0m\n");
+			printf("\033[47;31mThis book doesn't exist.\033[0m\n");
 			return 0;
 		}
 	}
@@ -152,7 +149,7 @@ int returnBook(user* theUser) {
 		// judge if is the last node
 		while (newBook->next != NULL) {
 			if (newBook->next->id == option) {
-				if (newBook->next->next = NULL) {
+				if (newBook->next->next == NULL) {
 					theUser->bookNum -= 1;
 					freeNode(newBook->next);
 
@@ -185,7 +182,7 @@ int returnBook(user* theUser) {
 			}
 			newBook = newBook->next;
 		}
-		printf("\033[47;31mThe book doesn't exist.\033[0m\n");
+		printf("\033[47;31mThis book doesn't exist.\033[0m\n");
 		return 0;
 	}
 
@@ -216,8 +213,14 @@ void userModel(user* signUser) {
 				borrowBook(signUser);
 				break;
 			case 2:
-				printUserBook(signUser);
-				returnBook(signUser);
+				if (signUser->bookNum == 0) {
+					printf("\nYou haven't borrowed any books yet.\n");
+				}
+				else {
+					printUserBook(signUser);
+					returnBook(signUser);
+				}
+				break;
 				break;
 			case 3:
 				searchModel();
@@ -226,9 +229,14 @@ void userModel(user* signUser) {
 				printBook(library);
 				break;
 			case 5:
-				book->length = signUser->bookNum;
-				book->list = signUser->broBook;
-				printUserBook(signUser);
+				if (signUser->bookNum == 0) {
+					printf("\nYou haven't borrowed any books yet.\n");
+				}
+				else {
+					book->length = signUser->bookNum;
+					book->list = signUser->broBook;
+					printUserBook(signUser);
+				}
 				break;
 			case 6:
 			default:

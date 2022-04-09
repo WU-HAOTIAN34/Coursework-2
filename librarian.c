@@ -38,12 +38,19 @@ void freeUser(userList* list) {
 	}
 }
 
+//chech if the book ID is valid
+int checkID(char* id) {
+	return (int)id[0] == 48 || id[0] == ' ' || id[strlen(id) - 1] == ' ' ||
+		strspn(id, "0123456789") != strlen(id) || strlen(id) >= 5 || strlen(id) <= 0;
+}
+
+
 // the interface of seach book
 void searchModel() {
 	BookList* res;
 	int year;
-	char findWay[100];
-	char enter[100];
+	char findWay[100];	// recive the string author, title or year
+	char enter[100];	// recive the option
 	int option = 0;
 	memset(findWay, '\0', 100);
 	memset(enter, '\0', 100);
@@ -161,4 +168,5 @@ void librarianModel() {
 		}
 	}
 }
+
 

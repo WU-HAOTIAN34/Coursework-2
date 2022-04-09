@@ -14,7 +14,7 @@ int covertInt(char* str) {
 	int len = strlen(str);
 	int res = 0;
 	// calculate each digit of number
-	for (int i = 0; i < len; i++) {
+	for (i = 0; i < len; i++) {
 		for (j = 0; j < len - i - 1; j++) {
 			k *= 10;
 		}
@@ -31,16 +31,18 @@ int covertInt(char* str) {
 //don't begin or end with space  
 int ifStrValid(char* str, int len) {
 	int i, a;
+			// can't begin or end with space
 	if (str[0] == ' ' || len == 0 || str[len - 1] == ' ') {
 		return 0;
 	}
 	for (i = 0; i < len; i++) {
 		a = (int)str[i];
+		//judge if consists of letter
 		if ((a >= 65 && a <= 90) || (a >= 97 && a <= 122)) {
 			continue;
-		}
+		}                                  
 		if (str[i] == ' ' && str[i + 1] != ' ') {
-			continue;
+			continue;             // can't exist two connected spaces
 		}
 		return 0;
 	}
@@ -54,11 +56,11 @@ int ifStrValid(char* str, int len) {
 // load the imformation of users 
 // return 0 if the file has been modified or corrupted
 int loadUser(FILE* file) {
-	char x;
-	int i, j, len;
-	Book* newBook;
+	char x;    // judge if there are extra bits
+	int i, j, len;    // len load the length of string  
+	Book* newBook;	  // the node of each book
 	member->list = (user*)malloc(sizeof(user));
-	user* newUser = member->list;
+	user* newUser = member->list;	//the node of each user
 	// load the number of user
 	if (fread(&(member->userNum), sizeof(int), 1, file) == 0) {
 		return 0;
@@ -135,9 +137,9 @@ int loadUser(FILE* file) {
 // store the imformation of user to the file
 int storeUser(FILE* file) {
 
-	int len;
-	Book* newBook;
-	user* newUser = member->list;
+	int len;	// the length of string
+	Book* newBook;   // book node
+	user* newUser = member->list;	//user node
 	fwrite(&(member->userNum), sizeof(int), 1, file);
 	while (newUser != NULL) {
 		// store user's information
@@ -188,19 +190,19 @@ void printBook(BookList* book) {
 
 // the register a user 
 int registerModel() {
-	int len;
-	char ID[100];
-	char password[100];
+	int len;		//length of string
+	char ID[100];	// recive id
+	char password[100]; // recive password
 	memset(ID, '\0', 100);
 	memset(password, '\0', 100);
-	user* newUser = member->list;
+	user* newUser = member->list;	// find the last node
 	// judge if is a valid ID
 	printf("\nPlease enter your ID (Consists of letters): ");
 	scanf("%[^\n]s", ID);
 	getchar();
 	if (!ifStrValid(ID, strlen(ID))) {
 		printf("\033[47;31mInvalid ID, fail to register.\033[0m\n");
-		printf("Expected ID: consist of characters and spaces,no more than one space is connected, \nno space at the beginning or end.\n");
+		printf("Expected ID: consists of letters and spaces, don't have multiple\nspaces connected, don't start or end with a space.\n");
 		return 0;
 	}
 	while (newUser->next != NULL) {
@@ -220,7 +222,7 @@ int registerModel() {
 	getchar();
 	if (!(strspn(password, "0123456789") == strlen(password) && strlen(password) == 8)) {
 		printf("\033[47;31mInvalid password, fail to register.\033[0m\n");
-		printf("Expected password: consist of 8 digits number,no space at the beginning or end.\n");
+		printf("Expected password: an 8-digit number, don't start or end with a space.\n");
 		return 0;
 	}
 	// store the imformation of new user
@@ -245,11 +247,11 @@ int registerModel() {
 
 // used for user login
 int signModel() {
-	char ID[100];
-	char password[100];
+	char ID[100];		// recive id
+	char password[100];	// recive password
 	memset(ID, '\0', 100);
 	memset(password, '\0', 100);
-	user* newUser = member->list;
+	user* newUser = member->list;	// match user
 	printf("\nPlease enter your ID: ");
 	scanf("%[^\n]s", ID);
 	getchar();
@@ -286,8 +288,8 @@ int signModel() {
 
 // print the interface of the program
 void interface() {
-	char enter[100];
-	int option = 0;
+	char enter[100];	//recive entering 
+	int option = 0;		// obtain the correct character
 	memset(enter, '\0', 100);
 
 	// option

@@ -1,6 +1,8 @@
 # A library management system
 
+Use `make` to compile source code in Ubuntu
 
+Enter `./library` to run program
 
 Programming project coursework1
 
